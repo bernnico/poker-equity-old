@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>180</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;enumeration&gt;&gt;
+CardImage
+--
+2, 3, ... Ten, 
+Jack, Queen, King
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>210</x>
+      <y>20</y>
+      <w>220</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;enumeration&gt;&gt;
+CardSuit
+--
+clubs, diamonds,
+hearts, spades
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>130</y>
+      <w>330</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>Card
+--
+-image: CardImage
+-suit: CardSuit
+
+--
++Card(image: CardImage, suit: CardSuit)
+
++getCardAsLong(): long[]
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

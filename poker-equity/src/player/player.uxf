@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>270</w>
+      <h>310</h>
+    </coordinates>
+    <panel_attributes>Players
+--
+-name: String
+-sit: int
+-hand: Card[]
+-stack: int
+-bet: int
+-positionosition: Position
+
+--
++Payer(name, sit, stack)
+
++addCards(card: Card[]): boolean
++getHand(): Card[]
++getName(): String
++setName()
++getSit(): int
++setSit()
++bet(bet: int)</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
