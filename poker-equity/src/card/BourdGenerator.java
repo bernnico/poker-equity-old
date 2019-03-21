@@ -1,7 +1,7 @@
 package card;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class BourdGenerator {
 	
@@ -24,34 +24,54 @@ public class BourdGenerator {
 	static final private int S = 2;
 	static final private int C = 3;
 	
-	static final private long FIRST_BOURD		= 0x00000000011111L;
-	static final private long LAST_BOURD		= 0x01111100000000L;
-	static final private int NEXT_CARD			= 0x04;
-	static final private long MASK_CLEAR_ALL	= 0x00L;
+	static final private long FIRST_BOURD    = 0x00000000011111L;
+	static final private long LAST_BOURD     = 0x01111100000000L;
+	static final private int  NEXT_CARD	     = 0x04;
+	static final private long MASK_CLEAR_ALL = 0x00L;
 	
 	private long[] bourd = new long[4];
 	private long image1, image2, image3, image4, image5;
 	private int suit1, suit2, suit3, suit4, suit5;
 	
-	private List<Double[]> bourdList = new ArrayList<Double[]>();
+	public Thread th;
+	private Queue<Long[]> bourdList = new LinkedList<Long[]>();
 	
-	public List<Double[]> getBourdList() {
+	public Queue<Long[]> getBourdList() {
 		return bourdList;
 	}
 	
 int i = 0;
 	public void setBourdList() {
 		init();
-
-		while (bourd[C] != LAST_BOURD) {
-			moveCard1();
-			moveCard2();
-			moveCard3();
-			moveCard4();
-			moveCard5();
-			
+		th = new Thread(){
+			@Override public void run() {
+				
+			System.out.println(th.getName());
+			while (bourd[C] != LAST_BOURD) {
+				moveCard1();
+				moveCard2();
+				moveCard3();
+				moveCard4();
+				moveCard5();
+				
+			}
 			System.out.println(i);
-		}
+			
+			if (bourdList.size() < 1000) {
+				Long[] l = new Long[4];
+				l[0] = new Long(bourd[0]);
+				l[1] = new Long(bourd[1]);
+				l[2] = new Long(bourd[2]);
+				l[3] = new Long(bourd[3]);
+				bourdList.add(l);
+				//System.out.println(Thread.currentThread().getName());
+			} else {
+				
+			}
+
+		}};
+		th.start();
+		System.out.println(Thread.currentThread().getName());
 	}
 	
 	private void init() {
