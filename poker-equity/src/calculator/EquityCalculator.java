@@ -30,6 +30,12 @@ public class EquityCalculator extends Thread {
 				boardGen.interrupt();
 				continue;
 			}
+			//flush
+			if (board[0] != 0
+					&& board[1] != 0
+					&& board[2] != 0
+					&& board[3] != 0) {
+			}
 			if ((pl1  | Defs.COMBOS) != 0) {
 				checkPairOrTreeOrFour();
 			}
