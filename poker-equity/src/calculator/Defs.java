@@ -32,7 +32,7 @@ public class Defs {
 	/* EquityCalculator */
 	protected static final int SLEEPTIME = 1000;
 	
-	protected static final long COMBOS = 0x06666666666666L;
+	protected static final long COMBOS  = 0x06666666666666L;
 	protected static final long PAIRS   = 0x02222222222222L;
 	protected static final long THREES  = 0x03333333333333L;
 	protected static final long FOURS   = 0x04444444444444L;
