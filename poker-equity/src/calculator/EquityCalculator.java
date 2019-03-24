@@ -16,6 +16,10 @@ public class EquityCalculator extends Thread {
 		this.playerCards = boardGen.getPlayerCards();
 	}
 
+	long brd = board[0] + board[1] + board[2] + board[3];
+	long pl1 = brd + playerCards[0][0];
+	long pl2 = brd + playerCards[1][0];
+	
 	@Override 
 	public void run() {
 		int wins, ties;
@@ -25,39 +29,28 @@ public class EquityCalculator extends Thread {
 			if (board == null)  {
 				boardGen.interrupt();
 				continue;
-			}			
-			checkPairOrTreeOrFour();
-			
-			
+			}
+			if ((pl1  | Defs.COMBOS) != 0) {
+				checkPairOrTreeOrFour();
+			}
 		}
 	}
 
 	private void checkPairOrTreeOrFour() {
-		long brd = board[0] + board[1] + board[2] + board[3];
-		long pl1 = brd + playerCards[0][0];
-		long pl2 = brd + playerCards[1][0];
-		
-		// player 1
-		if ((pl1  | Defs.COMBOS) != 0) {
 			if ((pl1 | Defs.FOURS) == Defs.FOURS) {
-				
+				for (int i = 0; i < Defs.IMAGES; i++) {
+					if ((pl1 & (Defs._A >> i)) != 0) {
+						
+					}
+				}
 			}
 			if ((pl1 | Defs.THREES) == Defs.THREES) {
 				
 			}
 			if ((pl1 | Defs.PAIRS) == Defs.PAIRS) {
 				
-			}
-			
-			
-		}
-		// player 2
-		if ((pl2  | Defs.COMBOS) != 0) {
-			for (int i = 0; i < Defs.IMAGES; i++) {
-
-			}
-
-		}
+			}			
+		
 	}
 }
 

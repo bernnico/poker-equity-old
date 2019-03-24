@@ -37,14 +37,14 @@ public class Defs {
 	protected static final long THREES  = 0x03333333333333L;
 	protected static final long FOURS   = 0x04444444444444L;
 	
-	protected static final long pair = 			0x0000FFFFFFFFF000l;
-	protected static final long twoPair = 		0x0000FFFFFFFFFFF0l;
-	protected static final long three = 		0x30FFFFFFFFFFFF00l;
-	protected static final long straight = 		0x3FFFFFFFFF000000l;
-	protected static final long flush = 		0x3FFFFFFFFFF00000l;
-	protected static final long fullHouse = 	0x700FFFFFFFFFFFFFl;
-	protected static final long four = 			0x7FFFFFFFFF000000l;
-	protected static final long straightFlush = 0x7FFFFFFFFFF00000l;
+	protected static final long pair = 			0x1000000000000000L;
+	protected static final long twoPair = 		0x2000000000000000L;
+	protected static final long three = 		0x3000000000000000L;
+	protected static final long straight = 		0x4000000000000000L;
+	protected static final long flush = 		0x5000000000000000L;
+	protected static final long fullHouse = 	0x6000000000000000L;
+	protected static final long four = 			0x7000000000000000L;
+	protected static final long straightFlush = 0x8000000000000000L;
 }
 
 
