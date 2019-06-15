@@ -30,7 +30,12 @@ public class Defs {
 	protected static final int C = 3;
 	
 	protected static final int  NEXT_CARD	   = 0x04;
-	protected static final long MASK_CLEAR_ALL = 0x00L;
+	
+	protected long allHeart;
+	protected long allDiamond;
+	protected long allSpade;
+	protected long allClubs;
+	
 
 	/* EquityCalculator */
 	protected static final int SLEEPTIME = 1000;
@@ -50,6 +55,23 @@ public class Defs {
 	protected static final long FULLHOUSE =	PAIR + 5;
 	protected static final long FOUR =		PAIR + 6;
 	protected static final long ST_FLUSH =	PAIR + 7;
+	
+	
+	public Defs() {
+		init();
+	}
+
+
+	private void init() {
+		
+		for (int i = 0; i < IMAGES; i++) {
+			allHeart = card.getCardAsLong(Image._2, Suit.c);
+			allDiamond = card.getCardAsLong(Image._2, Suit.c);
+			allSpade = card.getCardAsLong(Image._2, Suit.c);
+			allClubs = card.getCardAsLong(Image._2, Suit.c);
+		}
+	}
+	
 }
 
 
