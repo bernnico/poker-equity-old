@@ -3,7 +3,7 @@ package calculator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class BoardGenerator extends Thread {
+public class BoardGenerator_old extends Thread {
 	private Long[][] playerCards; // better a list -> later
 	private Long[] board = new Long[4];
 	private Queue<Long[]> boardQueue = new LinkedList<Long[]>();
@@ -11,7 +11,7 @@ public class BoardGenerator extends Thread {
 	private long image1, image2, image3, image4, image5;
 	private int suit1, suit2, suit3, suit4, suit5;
 	
-	public BoardGenerator(Long[][] pc) {
+	public BoardGenerator_old(Long[][] pc) {
 		this.playerCards = pc;
 	}
 

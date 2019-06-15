@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Queue;
 
 public class EquityCalculator2 {
-	private BoardGenerator2 bg;
+	private BoardGenerator bg;
 	private Queue<Long[]> boardList;
 	private Thread boardGen, equityTread;
 	private double[] boardCards;

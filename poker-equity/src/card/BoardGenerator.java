@@ -3,16 +3,21 @@ package card;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class BoardGenerator2 {
+public class BoardGenerator {
 	private long board;
 	private long cardsInGame;
 	
 	public Thread th;
 	private Queue<Long> boardList = new LinkedList<Long>();
 	
+	public BoardGenerator() {
+		
+	}
+	
 	private Runnable threadArg = new Runnable() {
 		
 		@Override public void run() {
+			
 			Card card = new Card();
 			
 			long card5 = card.getCardAsLong(Image._2, Suit.h);
@@ -79,16 +84,10 @@ public class BoardGenerator2 {
 					boardList.add(board);
 				}
 			}
-			
-			System.out.println(i);
-			System.out.println(boardList.size());
 	}};
 	
-	public BoardGenerator2() {
-		th = new Thread(threadArg);
-	}
-	
 	public Queue<Long> getBourdList() {
+		new Thread(threadArg).start();
 		return boardList;
 	}
 	
@@ -102,6 +101,10 @@ public class BoardGenerator2 {
 	
 	public void setCardsInGame(long cardsInGame) {
 		this.cardsInGame = cardsInGame;
+	}
+
+	public boolean isBoardListEmpty() {
+		return boardList.isEmpty();
 	}
 
 }

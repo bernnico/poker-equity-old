@@ -1,4 +1,4 @@
-import card.BoardGenerator2;
+import card.BoardGenerator;
 import card.Card;
 import card.Image;
 import card.Suit;
@@ -9,16 +9,27 @@ public class Main {
 		//System.out.println("09 " + Thread.currentThread().getName());
 		
 		
-		BoardGenerator2 bg = new BoardGenerator2();
+		BoardGenerator bg = new BoardGenerator();
 		long timeStart = System.nanoTime();
 		bg.setCardsInGame(0x08888888888L);
-		bg.setBourdList();
+		bg.getBourdList();
+		
+		for (long i = 0L; i < 10_000L; i++);
+		
+		
+		for (int i = 0; i < 10; i++) {
+			if (bg.isBoardListEmpty())
+				i--;
+			else
+				System.out.println(bg.getBourdList().poll());
+		}
+		
 		
 		
 		
 		
 		//System.out.println("21 " + Thread.currentThread().getName());
-		bg.th.join();
+//		bg.th.join();
 		//System.out.println(bg.getBourdList().size());
 		
 		//System.out.println(System.nanoTime()-timeStart);

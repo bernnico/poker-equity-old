@@ -3,13 +3,13 @@ package calculator;
 import java.util.Queue;
 
 public class EquityCalculator extends Thread {
-	private BoardGenerator boardGen;
+	private BoardGenerator_old boardGen;
 	private Queue<Long[]> boardQueue;
 
 	private Long[] board;
 	private Long[][] playerCards; // better a list -> later
 
-	public EquityCalculator(BoardGenerator bg) {
+	public EquityCalculator(BoardGenerator_old bg) {
 		this.boardGen = bg;
 		this.boardQueue = boardGen.getQuee();
 		this.playerCards = boardGen.getPlayerCards();
