@@ -11,6 +11,7 @@ public class Main {
 		
 		BoardGenerator2 bg = new BoardGenerator2();
 		long timeStart = System.nanoTime();
+		bg.setCardsInGame(0x08888888888L);
 		bg.setBourdList();
 		
 		
@@ -20,6 +21,8 @@ public class Main {
 		bg.th.join();
 		//System.out.println(bg.getBourdList().size());
 		
-		System.out.println(System.nanoTime()-timeStart);
+		//System.out.println(System.nanoTime()-timeStart);
+		
+		//test
 	}
 }

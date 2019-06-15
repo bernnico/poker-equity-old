@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="14.3.0">
-  <zoom_level>10</zoom_level>
+  <zoom_level>11</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>20</x>
-      <y>20</y>
-      <w>180</w>
-      <h>100</h>
+      <x>0</x>
+      <y>0</y>
+      <w>198</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>&lt;&lt;enumeration&gt;&gt;
 CardImage
@@ -20,10 +20,10 @@ Jack, Queen, King
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>210</x>
-      <y>20</y>
-      <w>220</w>
-      <h>100</h>
+      <x>209</x>
+      <y>0</y>
+      <w>242</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>&lt;&lt;enumeration&gt;&gt;
 CardSuit
@@ -36,10 +36,10 @@ hearts, spades
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>20</x>
-      <y>130</y>
-      <w>330</w>
-      <h>130</h>
+      <x>0</x>
+      <y>121</y>
+      <w>363</w>
+      <h>143</h>
     </coordinates>
     <panel_attributes>Card
 --

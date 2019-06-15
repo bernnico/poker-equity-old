@@ -27,12 +27,12 @@ public class EquityCalculator2 {
 	};
 	
 	public EquityCalculator2() {
-		bg = new BoardGenerator2();
-		this.boardList = bg.getBourdList();
-		this.boardGen = bg.getThread();
-		equityTread = new Thread(threadArg);
-		this.boardCards = new double[4];
-		this.playerCards = new ArrayList<double[]>();
+//		bg = new BoardGenerator2();
+//		this.boardList = bg.getBourdList();
+//		this.boardGen = bg.getThread();
+//		equityTread = new Thread(threadArg);
+//		this.boardCards = new double[4];
+//		this.playerCards = new ArrayList<double[]>();
 	}
 	
 	public double[] getEquity() {

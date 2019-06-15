@@ -9,9 +9,9 @@ public enum Image {
 	_7,
 	_8,
 	_9,
-	T,
-	J,
-	Q,
-	K,
-	A;
+	_T,
+	_J,
+	_Q,
+	_K,
+	_A;
 }

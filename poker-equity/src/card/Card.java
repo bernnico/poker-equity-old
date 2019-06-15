@@ -1,18 +1,13 @@
 package card;
 
 public class Card {
-	private Image image;
-	public Suit suit;
 	
-	public Card(Image image, Suit suit) {
-		this.image = image;
-		this.suit = suit;
+	public Card() {
 		
 	}
 	
-	public long[] getCardAsLong() {
-		long[] card = new long[4];
-		card[suit.ordinal()] = 1L << (image.ordinal() * 4);
+	public long getCardAsLong(Image image, Suit suit) {
+		long card = (1L << (image.ordinal() << 2)) << suit.ordinal();
 		
 		return card;
 	}
