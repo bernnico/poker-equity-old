@@ -15,6 +15,7 @@ public class Main {
 		
 		
 		
+		
 		//System.out.println("21 " + Thread.currentThread().getName());
 		bg.th.join();
 		//System.out.println(bg.getBourdList().size());
