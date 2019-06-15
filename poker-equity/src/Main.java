@@ -14,11 +14,9 @@ public class Main {
 		bg.setCardsInGame(0x08888888888L);
 		bg.getBourdList();
 		
-		for (long i = 0L; i < 10_000L; i++);
-		
 		
 		for (int i = 0; i < 10; i++) {
-			if (bg.isBoardListEmpty())
+			if (bg.isBourdListEmpty())
 				i--;
 			else
 				System.out.println(bg.getBourdList().poll());

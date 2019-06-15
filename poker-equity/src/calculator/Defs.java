@@ -1,6 +1,11 @@
 package calculator;
 
+import card.Card;
+import card.Image;
+import card.Suit;
+
 public class Defs {
+	static Card card = new Card();
 
 	/* BoardGenerator */
 	protected static final int IMAGES = 13;
@@ -16,7 +21,7 @@ public class Defs {
 	protected static final long _5 = 0x00000000001000L;
 	protected static final long _4 = 0x00000000000100L;
 	protected static final long _3 = 0x00000000000010L;
-	protected static final long _2 = 0x00000000000001L;
+	protected static final long _2 = card.getCardAsLong(Image._2, Suit.c);
 	
 	protected static final int SUITS = 4;
 	protected static final int H = 0;
@@ -24,8 +29,6 @@ public class Defs {
 	protected static final int S = 2;
 	protected static final int C = 3;
 	
-	protected static final long FIRST_BOURD    = 0x00000000011111L;
-	protected static final long LAST_BOURD     = 0x01111100000000L;
 	protected static final int  NEXT_CARD	   = 0x04;
 	protected static final long MASK_CLEAR_ALL = 0x00L;
 
@@ -37,14 +40,16 @@ public class Defs {
 	protected static final long THREES  = 0x03333333333333L;
 	protected static final long FOURS   = 0x04444444444444L;
 	
-	protected static final long pair = 			0x1000000000000000L;
-	protected static final long twoPair = 		0x2000000000000000L;
-	protected static final long three = 		0x3000000000000000L;
-	protected static final long straight = 		0x4000000000000000L;
-	protected static final long flush = 		0x5000000000000000L;
-	protected static final long fullHouse = 	0x6000000000000000L;
-	protected static final long four = 			0x7000000000000000L;
-	protected static final long straightFlush = 0x8000000000000000L;
+	
+	// most significant 4 bit
+	protected static final long PAIR =		0x01 << 60;
+	protected static final long TOW_PAIR =	PAIR + 1;
+	protected static final long THREE =		PAIR + 2;
+	protected static final long STRAIGHT =	PAIR + 3;
+	protected static final long FLUSH =		PAIR + 4;
+	protected static final long FULLHOUSE =	PAIR + 5;
+	protected static final long FOUR =		PAIR + 6;
+	protected static final long ST_FLUSH =	PAIR + 7;
 }
 
 

@@ -4,14 +4,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class BoardGenerator {
+	
 	private long board;
 	private long cardsInGame;
-	
-	public Thread th;
-	private Queue<Long> boardList = new LinkedList<Long>();
+	private Queue<Long> boardList;
 	
 	public BoardGenerator() {
-		
+		boardList = new LinkedList<Long>();
 	}
 	
 	private Runnable threadArg = new Runnable() {
@@ -39,8 +38,6 @@ public class BoardGenerator {
 			lastBoard = lastCard1 | lastCard2 | lastCard3 | lastCard4 | lastCard5;
 			
 			boardList.add(board);
-			
-			int i = 1;
 			
 			while (board != lastBoard) {
 				
@@ -78,7 +75,6 @@ public class BoardGenerator {
 				}
 				
 				board = card1 | card2 | card3 | card4 | card5;
-				i++;
 				
 				if ((cardsInGame & board) == 0) {
 					boardList.add(board);
@@ -87,37 +83,25 @@ public class BoardGenerator {
 	}};
 	
 	public Queue<Long> getBourdList() {
-		new Thread(threadArg).start();
+		if (boardList.isEmpty()) {
+			new Thread(threadArg).start();
+		}
+		// TODO
 		return boardList;
-	}
-	
-	public Thread getThread() {
-		return th;
-	}
-
-	public void setBourdList() {
-		th.start();
 	}
 	
 	public void setCardsInGame(long cardsInGame) {
 		this.cardsInGame = cardsInGame;
 	}
 
-	public boolean isBoardListEmpty() {
+	public boolean isBourdListEmpty() {
 		return boardList.isEmpty();
 	}
-
+	
+	public long getNextBoard() {
+		return boardList.poll();
+	}
+	
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
