@@ -1,21 +1,25 @@
 package card;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BoardGenerator {
 	
+	long timeStart = System.nanoTime();
+	
 	private long board;
 	private long cardsInGame;
-	private Queue<Long> boardList;
+	private ConcurrentLinkedQueue<Long> boardList;
 	
 	public BoardGenerator() {
-		boardList = new LinkedList<Long>();
+		boardList = new ConcurrentLinkedQueue<Long>();
 	}
 	
 	private Runnable threadArg = new Runnable() {
 		
 		@Override public void run() {
+			timeStart = System.nanoTime();
+			
+			
 			
 			Card card = new Card();
 			
@@ -80,13 +84,16 @@ public class BoardGenerator {
 					boardList.add(board);
 				}
 			}
-	}};
+			
+			System.out.println("generator: " + ( System.nanoTime() - timeStart));
+		}
+	};
 	
-	public Queue<Long> getBourdList() {
+	public ConcurrentLinkedQueue<Long> getBourdList() {
 		if (boardList.isEmpty()) {
 			new Thread(threadArg).start();
 		}
-		// TODO
+
 		return boardList;
 	}
 	
