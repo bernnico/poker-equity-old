@@ -51,16 +51,7 @@ public class Defs {
 	
 	
 	
-	public static void main(String[] args) throws InterruptedException {
-		init();
-		
-		System.out.printf("%x\n",allHeart);
-		System.out.printf("%x\n",allDiamond);
-		System.out.printf("%x\n",allSpade);
-		System.out.printf("%x\n",allClubs);
-		
-		
-	}
+	
 	public Defs() {
 		init();
 	}
