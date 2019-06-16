@@ -219,19 +219,10 @@ public class EquityCalculator {
 		// 0x00_00F0_0000_0000 : all Jacks
 		// 0x00_000F_0000_0000 : all Tens
 
-		int highCard = 0, step = 0;
+		int highCard = 0, step = 0, card = 0, straight = 0, playingCombination = 0;
+		boolean isAss = true;
 
-		for (int player = 0; player < playerHaveCards.length; player++) {
-			// ==========================================================
-			if ((playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) {
-				
-			} else {
-				
-			}
-			
-			
-			// ==========================================================
-			
+		for (int player = 0; player < playerHaveCards.length; player++) {			
 			for (int image = 0; image < 9; image++) {
 				step = image << 2;
 
@@ -278,6 +269,103 @@ public class EquityCalculator {
 
 				playerWinCards[player] = 0x1000_000F; // straight 5 4 3 2 (A)
 			}
+		}
+	}
+	
+	private static void checkStraight2() {
+		
+		int highCard = 0, straight = 0, playingCombination = 0;
+		
+		boolean isAss = true;
+
+		for (int player = 0; player < playerHaveCards.length; player++) {
+			
+			if ((playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) { // A
+				highCard = 13;
+				straight++;
+				playingCombination = 0x00_1000;
+			} else {
+				isAss = false;
+			}
+			if ((playerHaveCards[player] & 0x0_F000_0000_0000L) != 0) { // K
+				highCard = 12;
+				straight++;
+				playingCombination |= 0x00_0800;
+			} else {
+				straight = 0;
+				playingCombination = 0;
+			}
+			if ((playerHaveCards[player] & 0x0F_0F00_0000_0000L) != 0) { // Q
+				highCard = 11;
+				straight++;
+				playingCombination |= 0x00_0400;
+			} else {
+				straight = 0;
+				playingCombination = 0;
+			}
+			if ((playerHaveCards[player] & 0x0F_00F0_0000_0000L) != 0) { // J
+				highCard = 10;
+				straight++;
+				playingCombination |= 0x00_0200;
+			} else {
+				straight = 0;
+				playingCombination = 0;
+			}
+			if ((playerHaveCards[player] & 0x0F_000F_0000_0000L) != 0) { // T
+				highCard = 9;
+				straight++;
+				playingCombination |= 0x00_0100;
+			} else {
+				straight = 0;
+				playingCombination = 0;
+			}
+			if ((playerHaveCards[player] & 0x0F_0000_F000_0000L) != 0) { // 9
+				highCard = 8;
+				straight++;
+				playingCombination |= 0x00_0080;
+			} else {
+				straight = 0;
+				playingCombination = 0;
+			}
+			if ((playerHaveCards[player] & 0x0F_0000_0F00_0000L) != 0) { // 8
+				highCard = 7;
+				straight++;
+				playingCombination |= 0x00_0040;
+			} else {
+				straight = 0;
+				playingCombination = 0;
+			}
+			if ((playerHaveCards[player] & 0x0F_0000_00F0_0000L) != 0) { // 7
+				highCard = 6;
+				straight++;
+				playingCombination |= 0x00_0020;
+			} else {
+				straight = 0;
+				playingCombination = 0;
+			}
+			if ((playerHaveCards[player] & 0x0F_0000_000F_0000L) != 0) { // 6
+				highCard = 5;
+				straight++;
+				playingCombination |= 0x00_0010;
+			} else {
+				straight = 0;
+				playingCombination = 0;
+			}
+			if (isAss && (playerHaveCards[player] & 0x0F_0000_0000_F000L) != 0) { // 5
+				straight++;
+			} else {
+				return;
+			}
+			if ((playerHaveCards[player] & 0x0F_0000_0000_0F00L) == 0) { // 4
+				return;
+			}
+			if ((playerHaveCards[player] & 0x0F_0000_0000_00F0L) == 0) { // 3
+				return;
+			}
+			if ((playerHaveCards[player] & 0x0F_0000_0000_000FL) == 0) { // 2
+				return;
+			}
+
 		}
 	}
 
