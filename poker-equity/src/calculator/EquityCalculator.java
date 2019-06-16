@@ -7,7 +7,8 @@ public class EquityCalculator extends Thread {
 	private long boardCards;
 	private long playerHands[];
 	private int playerEquity[];
-	private long playerWinCards[];
+	private long playerHaveCards[];
+	private int playerWinCards[];
 	
 	Defs defs = new Defs();
 
@@ -16,83 +17,218 @@ public class EquityCalculator extends Thread {
 		this.boardCards = boardCards;
 		this.playerHands = playerHands;
 		this.playerEquity = new int[playerHands.length];
-		this.playerWinCards = new long[playerHands.length];
+		this.playerHaveCards = new long[playerHands.length];
 	}
 
 	@Override
 	public void run() {
 		
-		Defs defs = new Defs();
-		
-		for (int i = 0; i < playerWinCards.length; i++) {
-			playerWinCards[i] = playerHands[i] | boardCards;
+		for (int i = 0; i < playerHaveCards.length; i++) {
+			playerHaveCards[i] = playerHands[i] | boardCards;
 		}
 
 		while (!boardList.isEmpty()) {
 			
-			// TODO
-			if (!((boardCards & defs.allHeart) != 0
-					&& (boardCards & defs.allDiamond) != 0
-					&& (boardCards & defs.allSpade) != 0
-					&& (boardCards & defs.allClubs) != 0)) {
-				checkFlush();
-			}
-			
-			
+			checkFlush();
 			
 			checkStraight();
 			
 			checkCombos();
 			
-			
-			
-			
 		}
 	}
 	
 	private void checkFlush() {
-		int cnt = 0;
-		for (int player = 0; player < playerWinCards.length; player++) {
+		
+		// 0x01_1111_1111_1111 : all Hearts
+		// 0x01_2222_2222_2222 : all Diamonds
+		// 0x04_4444_4444_4444 : all Spades
+		// 0x08_8888_8888_8888 : all Clubs
+		
+		for (int player = 0; player < playerHaveCards.length; player++) {
 			
-			for (int image = 0; image < Defs.IMAGES; image = Defs.IMAGES * Defs.SUITS) {
+			if (   (playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
+				&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
+				&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
+				&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
 				
-				if ((boardCards & defs.allHeart) != 0) {
-					if ((playerWinCards[player] & (1L << image)) != 0) {
-						cnt++;
-						// TODO Auto-generated method stub  << ======================================
-						
-					}
-				}
-				if ((boardCards & defs.allDiamond) != 0) {
-					
-				}
-				if ((boardCards & defs.allSpade) != 0) {
-					
-				}
-				if ((boardCards & defs.allClubs) != 0) {
-					
-				}
-				
+				continue;
+			}
+			
+			boolean flashFound = false;
+			
+			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0) {
+				flashFound = setFlushIfFound(player, 0x01_0000_0000_0000L); // Ah
+				flashFound = true;
+			} 
+			if (!flashFound && (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0) {
+				flashFound = setFlushIfFound(player, 0x02_0000_0000_0000L); // Ak
+				flashFound = true;
+			}
+			if (!flashFound && (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0) {
+				flashFound = setFlushIfFound(player, 0x04_0000_0000_0000L); // As
+				flashFound = true;
+			}
+			if (!flashFound && (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
+				flashFound = setFlushIfFound(player, 0x08_0000_0000_0000L); // Ac
 			}
 		}
 		
 	}
-	
-	private void checkCombos() {
-		// TODO Auto-generated method stub
+
+	private boolean setFlushIfFound(int player, long currentSuit) {
+		
+		int flush= 0;
+		int playingCombination = 0;
+		
+		for (int image = 0; image < 13; image++) {
+			
+			if ((playerHaveCards[player] & (currentSuit >> (image << 2))) != 0) {
+				flush++;
+				playingCombination |= 1 << (13 - image);
+			}
+
+			if (flush == 5) {
+				playerWinCards[player] |= 0x5000_0000; // flush indicator
+				playerWinCards[player] |= playingCombination;
+				
+				return true;
+			} 
+		}
+		
+		return false;
 	}
 
 	private void checkStraight() {
+		
+		// 0x0F_0000_0000_0000 : all Asses
+		// 0x00_F000_0000_0000 : all Kings
+		// 0x00_0F00_0000_0000 : all Queens
+		// 0x00_00F0_0000_0000 : all Jacks
+		// 0x00_000F_0000_0000 : all Tens
+
+		int highCard = 0;
+		
+		for (int player = 0; player < playerHaveCards.length; player++) {
+			
+			for (int i = 0; i < 9; i += 4) {				
+				if ((       playerHaveCards[player] & (0x0F_0000_0000_0000L >> i)) != 0
+						&& (playerHaveCards[player] & (0x00_F000_0000_0000L >> i)) != 0
+						&& (playerHaveCards[player] & (0x00_0F00_0000_0000L >> i)) != 0
+						&& (playerHaveCards[player] & (0x00_00F0_0000_0000L >> i)) != 0
+						&& (playerHaveCards[player] & (0x00_000F_0000_0000L >> i)) != 0) {
+					
+					highCard = 0x1F << (13 - (i >> 2));
+					
+					
+					if ((playerHaveCards[player] & 0x5000_0000) != 0) { // flush indicator
+						if ((playerHaveCards[player] & 0xFFFF) == highCard) {
+							playerWinCards[player] ^= 0x5000_0000;
+							playerWinCards[player] |= 0x8000_0000; // royal flush
+							return;
+						}
+					} 
+					
+					playerWinCards[player] |= 0x4000_0000; // straight
+					playerWinCards[player] |= highCard;
+					
+					break;
+				}
+			}
+			
+			// find 5 4 3 2 A
+			if ((       playerHaveCards[player] & 0x4000_0000) == 0 // straight
+					&& (playerHaveCards[player] & 0x00_0000_0000_F000L) != 0 // 5
+					&& (playerHaveCards[player] & 0x00_0000_0000_0F00L) != 0 // 4
+					&& (playerHaveCards[player] & 0x00_0000_0000_00F0L) != 0 // 3
+					&& (playerHaveCards[player] & 0x00_0000_0000_000FL) != 0 // 2
+					&& (playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) { // A
+				
+				if ((playerHaveCards[player] & 0x5000_0000) != 0) { // flush indicator
+					if ((playerHaveCards[player] & 0xFFFF) == 0x100F) { // 5 4 3 2 A
+						playerWinCards[player] ^= 0x5000_0000;
+						playerWinCards[player] |= 0x8000_0000; // royal flush
+						return;
+					}
+				} 
+				
+				playerWinCards[player] |= 0x4000_0000; // straight
+				playerWinCards[player] |= 0x0000_000F;
+			}
+		}
+		
+		// TODO high card
+	}
+	
+	private void checkCombos() {
+		
+//		long pair  = 0x03_0000_0000_0000L;
+//		long three = 0x07_0000_0000_0000L;
+//		long four  = 0x0F_0000_0000_0000L;
+		
+		int pairHit = 0;
+		int threeHit = 0;
+		int fourHit = 0;
+		
+		int playingCombination = 0;
+		
+		for (int player = 0; player < playerHaveCards.length; player++) {
+			
+			for (int image = 0; image < 13; image++) {
+				if ((playerHaveCards[player] & 0x03_0000_0000_0000L) == 0x03_0000_0000_0000L) { // pairs
+					playerWinCards[player] |= 0x4000_0000;
+					
+				} else if ((playerHaveCards[player] & 0x07_0000_0000_0000L) == 0x07_0000_0000_0000L) { // threes
+		
+					if ((playerWinCards[player] & 0x4000_0000) == 0x4000_0000) {
+						
+					} else {
+						playerWinCards[player] |= image << 16;
+					}
+					
+				} else if ((playerHaveCards[player] & 0x0F_0000_0000_0000L) == 0x0F_0000_0000_0000L) { // fours
+					playerWinCards[player] |= 0x4000_0000;
+					
+					continue;
+					
+				} else { // high card
+					
+					
+				}
+				
+			}
+			
+			
+		}
 		
 		
 	}
 
 	public int[] getPlayerEquity() {
 		// TODO Auto-generated method stub
-		
 		return null;
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

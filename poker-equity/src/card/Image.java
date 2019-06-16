@@ -1,6 +1,7 @@
 package card;
 
 public enum Image {
+//	_non,
 	_2,
 	_3,
 	_4,
