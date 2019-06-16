@@ -281,90 +281,104 @@ public class EquityCalculator {
 		for (int player = 0; player < playerHaveCards.length; player++) {
 			
 			if ((playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) { // A
-				highCard = 13;
 				straight++;
 				playingCombination = 0x00_1000;
 			} else {
 				isAss = false;
 			}
 			if ((playerHaveCards[player] & 0x0_F000_0000_0000L) != 0) { // K
-				highCard = 12;
 				straight++;
 				playingCombination |= 0x00_0800;
 			} else {
 				straight = 0;
 				playingCombination = 0;
 			}
-			if ((playerHaveCards[player] & 0x0F_0F00_0000_0000L) != 0) { // Q
-				highCard = 11;
+			if ((playerHaveCards[player] & 0x00_0F00_0000_0000L) != 0) { // Q
 				straight++;
 				playingCombination |= 0x00_0400;
 			} else {
 				straight = 0;
 				playingCombination = 0;
 			}
-			if ((playerHaveCards[player] & 0x0F_00F0_0000_0000L) != 0) { // J
-				highCard = 10;
+			if ((playerHaveCards[player] & 0x00_00F0_0000_0000L) != 0) { // J
 				straight++;
 				playingCombination |= 0x00_0200;
 			} else {
 				straight = 0;
 				playingCombination = 0;
 			}
-			if ((playerHaveCards[player] & 0x0F_000F_0000_0000L) != 0) { // T
-				highCard = 9;
+			if ((playerHaveCards[player] & 0x00_000F_0000_0000L) != 0) { // T
 				straight++;
 				playingCombination |= 0x00_0100;
+				if (straight == 5) highCard = 8;
 			} else {
 				straight = 0;
 				playingCombination = 0;
 			}
-			if ((playerHaveCards[player] & 0x0F_0000_F000_0000L) != 0) { // 9
-				highCard = 8;
+			if ((playerHaveCards[player] & 0x00_0000_F000_0000L) != 0) { // 9
 				straight++;
 				playingCombination |= 0x00_0080;
+				if (highCard == 0 && straight == 5) highCard = 7;
 			} else {
 				straight = 0;
 				playingCombination = 0;
 			}
-			if ((playerHaveCards[player] & 0x0F_0000_0F00_0000L) != 0) { // 8
-				highCard = 7;
+			if ((playerHaveCards[player] & 0x00_0000_0F00_0000L) != 0) { // 8
 				straight++;
 				playingCombination |= 0x00_0040;
+				if (highCard == 0 && straight == 5) highCard = 6;
 			} else {
 				straight = 0;
 				playingCombination = 0;
 			}
-			if ((playerHaveCards[player] & 0x0F_0000_00F0_0000L) != 0) { // 7
-				highCard = 6;
+			if ((playerHaveCards[player] & 0x00_0000_00F0_0000L) != 0) { // 7
 				straight++;
 				playingCombination |= 0x00_0020;
+				if (highCard == 0 && straight == 5) highCard = 5;
 			} else {
 				straight = 0;
 				playingCombination = 0;
 			}
-			if ((playerHaveCards[player] & 0x0F_0000_000F_0000L) != 0) { // 6
-				highCard = 5;
+			if ((playerHaveCards[player] & 0x00_0000_000F_0000L) != 0) { // 6
 				straight++;
 				playingCombination |= 0x00_0010;
+				if (highCard == 0 && straight == 5) highCard = 4;
 			} else {
 				straight = 0;
 				playingCombination = 0;
 			}
-			if (isAss && (playerHaveCards[player] & 0x0F_0000_0000_F000L) != 0) { // 5
+			if (isAss && (playerHaveCards[player] & 0x00_0000_0000_F000L) != 0) { // 5
 				straight++;
+				playingCombination |= 0x00_0008;
+				if (highCard == 0 && straight == 5) highCard = 3;
 			} else {
-				return;
+				
 			}
-			if ((playerHaveCards[player] & 0x0F_0000_0000_0F00L) == 0) { // 4
-				return;
+			if ((playerHaveCards[player] & 0x00_0000_0000_0F00L) != 0) { // 4
+				straight++;
+				playingCombination |= 0x00_0004;
+				if (highCard == 0 && straight == 5) highCard = 2;
+			} else {
+				
 			}
-			if ((playerHaveCards[player] & 0x0F_0000_0000_00F0L) == 0) { // 3
-				return;
+			if ((playerHaveCards[player] & 0x00_0000_0000_00F0L) != 0) { // 3
+				straight++;
+				playingCombination |= 0x00_0002;
+				if (highCard == 0 && straight == 5) highCard = 1;
+			} else {
+				
 			}
-			if ((playerHaveCards[player] & 0x0F_0000_0000_000FL) == 0) { // 2
-				return;
+			if ((playerHaveCards[player] & 0x00_0000_0000_000FL) != 0) { // 2
+				straight++;
+				playingCombination |= 0x00_0001;
+			} else {
+				
 			}
+			
+			if (highCard != 0) {
+				
+			}
+			
 
 		}
 	}
