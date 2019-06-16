@@ -82,10 +82,11 @@ public class BoardGenerator {
 				
 				if ((cardsInGame & board) == 0) {
 					boardList.add(board);
+//					System.out.printf("%x\n", board);
 				}
 			}
 			
-			System.out.println("generator: " + ( System.nanoTime() - timeStart));
+//			System.out.println("generator: " + ( System.nanoTime() - timeStart));
 		}
 	};
 	
