@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class BoardsList extends Thread {
 	
 	/* ====================TESTS ========================== */
-	long timeStart;
-	boolean isParallel = false;
+	private long timeStart;
+	private boolean isParallel = false;
 	/* =====================================================*/
 	
 	private long board;
@@ -23,8 +23,7 @@ public class BoardsList extends Thread {
 			list = new ArrayList<Long>();
 	}
 		
-	@Override 
-	public void run() {
+	@Override public void run() {
 		Card card = new Card();
 			
 		long card5 = card.getCardAsLong(Image._2, Suit.h);
@@ -32,25 +31,18 @@ public class BoardsList extends Thread {
 		long card3 = card.getCardAsLong(Image._2, Suit.s);
 		long card2 = card.getCardAsLong(Image._2, Suit.c);
 		long card1 = card.getCardAsLong(Image._3, Suit.h);
-			
-		board = card1 | card2 | card3 | card4 | card5;
-//		board = 0x001FL;
+		board = card1|card2|card3|card4|card5;
+		add(board);
 			
 		long lastBoard;
-			
 		long lastCard5 = card.getCardAsLong(Image._K, Suit.c);
 		long lastCard4 = card.getCardAsLong(Image._A, Suit.h);
 		long lastCard3 = card.getCardAsLong(Image._A, Suit.k);
 		long lastCard2 = card.getCardAsLong(Image._A, Suit.s);
 		long lastCard1 = card.getCardAsLong(Image._A, Suit.c);
-		
-		lastBoard = lastCard1 | lastCard2 | lastCard3 | lastCard4 | lastCard5;
-//		lastBoard = 0x000F_8000_0000_0000L;
-			
-		add(board);
+		lastBoard = lastCard1|lastCard2|lastCard3|lastCard4|lastCard5;
 	
 		while (board != lastBoard) {
-				
 			if (card1 != lastCard1) {
 				card1 <<= 1;
 			} else {                          
@@ -75,16 +67,12 @@ public class BoardsList extends Thread {
 								card3 = card4 << 1;
 								card2 = card3 << 1;
 								card1 = card2 << 1;	
-							} else {
-									
 							}
 						}
 					}
 				}
 			}
-			
-			board = card1 | card2 | card3 | card4 | card5;
-			
+			board = card1|card2|card3|card4|card5;
 			if ((cardsInGame & board) == 0) {
 				add(board);
 			}
@@ -95,9 +83,9 @@ public class BoardsList extends Thread {
 	
 	public void generateBourdsList() {
 		if (isParallel)
-				super.start();
+			super.start();
 		else
-				this.run();
+			this.run();
 	}
 	
 	public void setCardsInGame(long cardsInGame) {
@@ -126,6 +114,7 @@ public class BoardsList extends Thread {
 	}
 	
 	private boolean add(long board) {
+		// TODO
 		if (isParallel)
 			return boardList.add(board);
 		else

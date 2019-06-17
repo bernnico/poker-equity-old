@@ -1,15 +1,14 @@
 package calculator;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import card.BoardsList;
 import card.Card;
 import card.Image;
 import card.Suit;
+import debug.Debug;
 
 public class EquityCalculator {
-//	private static ConcurrentLinkedQueue<Long> boardList;
 	private static long boardCards;
 	private static long playerHands[];
 	private static int playerEquity[];
@@ -81,27 +80,8 @@ public class EquityCalculator {
 			checkStraight();
 
 			checkCombos();
-
-			if ((playerWinCards[0] & 0x5000_0000) == 0x5000_0000)
-				stFlush++;
-			if ((playerWinCards[0] & 0x4000_0000) == 0x4000_0000)
-				four++;
-			if ((playerWinCards[0] & 0x3000_0000) == 0x3000_0000)
-				fullHouse++;
-			if ((playerWinCards[0] & 0x2000_0000) == 0x2000_0000)
-				flush++;
-			if ((playerWinCards[0] & 0x1000_0000) == 0x1000_0000)
-				straight++;
-
-			// --0mia-_set-htwo-ltwo-000k-kick-kick-kick
-			if ((playerWinCards[0] & 0x0F00_0000) != 0 && (playerWinCards[0] & 0xF0FF_0000) == 0)
-				three++;
-			if ((playerWinCards[0] & 0x00FF_0000) != 0 && (playerWinCards[0] & 0xFF00_0000) == 0)
-				twoPair++;
-			if ((playerWinCards[0] & 0x00F0_0000) != 0 && (playerWinCards[0] & 0xFF0F_0000) == 0)
-				pair++;
-			if ((playerWinCards[0] & 0x0000_1FFF) == playerWinCards[0])
-				high++;
+			
+			Debug.addPlayerCards(playerWinCards[0]);
 
 			if (playerWinCards[0] > playerWinCards[1]) {
 				playerEquity[0]++;
@@ -110,26 +90,12 @@ public class EquityCalculator {
 			}
 			
 		}
-			
-		
 
-		System.out.println("high\t\t" + 1.0 * high / size);
-		System.out.println("pair\t\t" + 1.0 * pair / size);
-		System.out.println("twoPair\t\t" + 1.0 * twoPair / size);
-		System.out.println("three\t\t" + 1.0 * three / size);
-		System.out.println("straight\t" + 1.0 * straight / size);
-		System.out.println("flush\t\t" + 1.0 * flush / size);
-		System.out.println("fullHouse\t" + 1.0 * fullHouse / size);
-		System.out.println("four\t\t" + 1.0 * four / size);
-		System.out.println("stFlush\t\t" + 1.0 * stFlush / size);
-
+		Debug.printAllHands(size);
 		System.out.println("size:\t\t" + size);
 		System.out.println("player1\t\t" + playerEquity[0]);
 		System.out.println("player2\t\t" + playerEquity[1]);
-
-		System.out.println(1.0 * playerEquity[0] / size);
-		System.out.println(1.0 * playerEquity[1] / size);
-
+		Debug.printWinLose(size, playerEquity[0]);
 	}
 
 	public static void run3() {
@@ -220,8 +186,7 @@ public class EquityCalculator {
 		// 0x00_00F0_0000_0000 : all Jacks
 		// 0x00_000F_0000_0000 : all Tens
 
-		int highCard = 0, step = 0, card = 0, straight = 0, playingCombination = 0;
-		boolean isAss = true;
+		int highCard = 0, step = 0;
 
 		for (int player = 0; player < playerHaveCards.length; player++) {			
 			for (int image = 0; image < 9; image++) {
