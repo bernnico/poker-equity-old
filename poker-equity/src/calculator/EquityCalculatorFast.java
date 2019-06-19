@@ -1,30 +1,19 @@
 package calculator;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import card.BoardsList;
 import card.Card;
 import card.Image;
 import card.Suit;
+import debug.Debug;
 
 public class EquityCalculatorFast {
-	private static ConcurrentLinkedQueue<Long> boardList;
 	private static long boardCards;
 	private static long playerHands[];
 	private static int playerEquity[];
 	private static long playerHaveCards[];
 	private static int playerWinCards[];
-
-	private static int high = 0;
-	private static int pair = 0;
-	private static int twoPair = 0;
-	private static int three = 0;
-	private static int straight = 0;
-	private static int flush = 0;
-	private static int fullHouse = 0;
-	private static int four = 0;
-	private static int stFlush = 0;
 
 	Defs defs = new Defs();
 	long timeStart = System.nanoTime();
@@ -36,36 +25,68 @@ public class EquityCalculatorFast {
 //		this.playerEquity = new int[playerHands.length];
 //		this.playerHaveCards = new long[playerHands.length];
 //		thi.splayerWinCards = new int[playerHands.length];
+
 	}
 
-//	public static void main(String[] args) throws InterruptedException {
-//		playerWinCards = new int[2];
-//		playerEquity = new int[2];
-//		playerHands = new long[2];
-//		playerHaveCards = new long[2];
-//
-//		run2();
-//	}
+	public static void main(String[] args) throws InterruptedException {
+		System.out.println("fast");
+		playerWinCards = new int[2];
+		playerEquity = new int[2];
+		playerHands = new long[2];
+		playerHaveCards = new long[2];
+
+		run2();
+	}
+
+	public static void run3() {
+		Card card = new Card();
+
+		long player1 = card.getCardAsLong(Image._8, Suit.c) | card.getCardAsLong(Image._J, Suit.h);
+		long player2 = card.getCardAsLong(Image._K, Suit.c) | card.getCardAsLong(Image._J, Suit.c);
+
+		boardCards = card.getCardAsLong(Image._K, Suit.k) | card.getCardAsLong(Image._Q, Suit.k)
+				| card.getCardAsLong(Image._9, Suit.s) | card.getCardAsLong(Image._T, Suit.k)
+				| card.getCardAsLong(Image._Q, Suit.c);
+
+		playerHaveCards[0] = player1 | boardCards;
+		playerHaveCards[1] = player2 | boardCards;
+
+		playerWinCards[0] = 0;
+		playerWinCards[1] = 0;
+
+		checkFlush();
+
+		// checkStraight();
+
+		checkCombos();
+
+		System.out.printf("player1:\t\t%x\n", playerWinCards[0]);
+		System.out.println((playerWinCards[0] & 0x1000_0000) == 0x1000_0000);
+		System.out.printf("player2:\t\t%x", playerWinCards[1]);
+	}
 
 //	@Override
 	public static void run2() {
 		Card card = new Card();
-		BoardsList gen = new BoardsList();
 		long player1 = card.getCardAsLong(Image._K, Suit.c) | card.getCardAsLong(Image._Q, Suit.c);
 		long player2 = card.getCardAsLong(Image._Q, Suit.k) | card.getCardAsLong(Image._Q, Suit.s);
 
-		gen.setCardsInGame(player1 | player2);
-		gen.generateBourdsList();
+		BoardsList gen = new BoardsList();
+//		gen.setCardsInGame(player1 | player2);
+		gen.generateBourdsList(player1 , player2);
 
 		playerHands[0] = player1;
 		playerHands[1] = player2;
 
-		while (boardList.size() < 1000)
+		while (gen.size() != 1712304)
 			;
-
+		long timeStart = System.nanoTime();
 		int size = 0;
-		while (!boardList.isEmpty()) {
-			size++;
+//		
+//		while (!gen.isEmpty()) {
+		while (size != 1712304) {
+			// CPU:
+			// evaluate time (48 nCp 5) in 600.000.000n
 
 			boardCards = gen.getNext(size++);
 
@@ -77,30 +98,11 @@ public class EquityCalculatorFast {
 
 			checkFlush();
 
-			checkStraight();
+			// checkStraight();
 
 			checkCombos();
 
-			if ((playerWinCards[0] & 0x5000_0000) == 0x5000_0000)
-				stFlush++;
-			if ((playerWinCards[0] & 0x4000_0000) == 0x4000_0000)
-				four++;
-			if ((playerWinCards[0] & 0x3000_0000) == 0x3000_0000)
-				fullHouse++;
-			if ((playerWinCards[0] & 0x2000_0000) == 0x2000_0000)
-				flush++;
-			if ((playerWinCards[0] & 0x1000_0000) == 0x1000_0000)
-				straight++;
-
-			// --0mia-_set-htwo-ltwo-000k-kick-kick-kick
-			if ((playerWinCards[0] & 0x0F00_0000) != 0 && (playerWinCards[0] & 0xF0FF_0000) == 0)
-				three++;
-			if ((playerWinCards[0] & 0x00FF_0000) != 0 && (playerWinCards[0] & 0xFF00_0000) == 0)
-				twoPair++;
-			if ((playerWinCards[0] & 0x00F0_0000) != 0 && (playerWinCards[0] & 0x0F0F_0000) == 0)
-				pair++;
-			if ((playerWinCards[0] & 0x0000_1FFF) == playerWinCards[0])
-				high++;
+			Debug.addPlayerCards(playerWinCards[0]);
 
 			if (playerWinCards[0] > playerWinCards[1]) {
 				playerEquity[0]++;
@@ -109,327 +111,236 @@ public class EquityCalculatorFast {
 			}
 
 		}
+		long timeStop = System.nanoTime() - timeStart;
+		System.out.printf("complett: %,d\n", timeStop);
 
-		System.out.println("high\t\t" + 1.0 * high / size);
-		System.out.println("pair\t\t" + 1.0 * pair / size);
-		System.out.println("twoPair\t\t" + 1.0 * twoPair / size);
-		System.out.println("three\t\t" + 1.0 * three / size);
-		System.out.println("straight\t" + 1.0 * straight / size);
-		System.out.println("flush\t\t" + 1.0 * flush / size);
-		System.out.println("fullHouse\t" + 1.0 * fullHouse / size);
-		System.out.println("four\t\t" + 1.0 * four / size);
-		System.out.println("stFlush\t\t" + 1.0 * stFlush / size);
-
+		Debug.printAllHands(size);
 		System.out.println("size:\t\t" + size);
 		System.out.println("player1\t\t" + playerEquity[0]);
 		System.out.println("player2\t\t" + playerEquity[1]);
-
-		System.out.println(1.0 * playerEquity[0] / size);
-		System.out.println(1.0 * playerEquity[1] / size);
-
-	}
-
-	public static void run3() {
-		Card card = new Card();
-
-		long player1 = card.getCardAsLong(Image._A, Suit.c) | card.getCardAsLong(Image._J, Suit.h);
-		long player2 = card.getCardAsLong(Image._K, Suit.c) | card.getCardAsLong(Image._J, Suit.c);
-
-		boardCards = card.getCardAsLong(Image._Q, Suit.k) | card.getCardAsLong(Image._A, Suit.k)
-				| card.getCardAsLong(Image._A, Suit.s) | card.getCardAsLong(Image._K, Suit.k)
-				| card.getCardAsLong(Image._Q, Suit.c);
-
-		playerHaveCards[0] = player1 | boardCards;
-		playerHaveCards[1] = player2 | boardCards;
-
-		playerWinCards[0] = 0;
-		playerWinCards[1] = 0;
-
-		checkFlush();
-
-		checkStraight();
-
-		checkCombos();
-
-		System.out.printf("player1:\t\t%x\n", playerWinCards[0]);
-		System.out.println((playerWinCards[0] & 0x4000_0000) == 0x4000_0000);
-		System.out.printf("player2:\t\t%x", playerWinCards[1]);
-
+		Debug.printWinLose(size, playerEquity[0], 1);
+		Debug.printWinLose(size, playerEquity[1], 2);
 	}
 
 	private static void checkFlush() {
-		// 0x01_1111_1111_1111 : all Hearts
-		// 0x01_2222_2222_2222 : all Diamonds
-		// 0x04_4444_4444_4444 : all Spades
-		// 0x08_8888_8888_8888 : all Clubs
 
 		for (int player = 0; player < playerHaveCards.length; player++) {
+			boolean flushFound = true;
 			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
 					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
 					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
 					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
-				continue;
+				flushFound = false;
 			}
 
-			boolean flushFound = false;
+			long cardsInt = 0;
 
-			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0) {
-				flushFound = setFlushIfFound(player, 0x01_0000_0000_0000L); // Ah
+			int flagFlushH = 0, flagFlushK = 0, flagFlushS = 0, flagFlushC = 0;
+			int constellationFlushH = 0, constellationFlushK = 0, constellationFlushS = 0, constellationFlushC = 0;
+			int flagStraight = 0, constellationStraight = 0;
+
+			for (int image = 0; image < 13; image++) {
+
+				if (flushFound) { // flush
+					if ((playerHaveCards[player] & (0x01_0000_0000_0000L >> (image << 2))) != 0) {
+						flagFlushH++;
+						constellationFlushH |= 0x00_1000 >> image;
+					}
+					if ((playerHaveCards[player] & (0x02_0000_0000_0000L >> (image << 2))) != 0) {
+						flagFlushK++;
+						constellationFlushK |= 0x00_1000 >> image;
+					}
+					if ((playerHaveCards[player] & (0x04_0000_0000_0000L >> (image << 2))) != 0) {
+						flagFlushS++;
+						constellationFlushS |= 0x00_1000 >> image;
+					}
+					if ((playerHaveCards[player] & (0x08_0000_0000_0000L >> (image << 2))) != 0) {
+						flagFlushC++;
+						constellationFlushC |= 0x00_1000 >> image;
+					}
+				}
+
+				// Straight
+				if ((playerHaveCards[player] & (0x0F_0000_0000_0000L >> (image << 2))) != 0) {
+					if (flagStraight != 5) {
+						flagStraight++;
+						constellationStraight |= 0x00_1000 >> image;
+					}
+				} else if (flagStraight < 5) {
+					flagStraight = 0;
+					constellationStraight = 0;
+				}
 			}
-			if (!flushFound && (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0) {
-				flushFound = setFlushIfFound(player, 0x02_0000_0000_0000L); // Ak
-			}
-			if (!flushFound && (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0) {
-				flushFound = setFlushIfFound(player, 0x04_0000_0000_0000L); // As
-			}
-			if (!flushFound && (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
-				setFlushIfFound(player, 0x08_0000_0000_0000L); // Ac
+
+			if (flagFlushH > 4) {
+				if (flagStraight == 5 && (constellationFlushH & constellationStraight) == constellationStraight) {
+					playerWinCards[player] = 0x5000_0000 | constellationFlushH; // st_flaush
+				} else {
+					playerWinCards[player] = 0x2000_0000 | constellationFlushH; // flush indicator
+				}
+			} else if (flagFlushK > 4) {
+				if (flagStraight == 5 && (constellationFlushK & constellationStraight) == constellationStraight) {
+					playerWinCards[player] = 0x5000_0000 | constellationFlushK; // st_flaush
+				} else {
+					playerWinCards[player] = 0x2000_0000 | constellationFlushK; // flush indicator
+				}
+			} else if (flagFlushS > 4) {
+				if (flagStraight == 5 && (constellationFlushS & constellationStraight) == constellationStraight) {
+					playerWinCards[player] = 0x5000_0000 | constellationFlushS; // st_flaush
+				} else {
+					playerWinCards[player] = 0x2000_0000 | constellationFlushS; // flush indicator
+				}
+			} else if (flagFlushC > 4) {
+				if (flagStraight == 5 && (constellationFlushC & constellationStraight) == constellationStraight) {
+					playerWinCards[player] = 0x5000_0000 | constellationFlushC; // st_flaush
+				} else {
+					playerWinCards[player] = 0x2000_0000 | constellationFlushC; // flush indicator
+				}
+			} else if (flagStraight == 5) {
+				playerWinCards[player] = 0x1000_0000 | constellationStraight; // straight
 			}
 		}
-
 	}
 
 	private static boolean setFlushIfFound(int player, long currentSuit) {
-		// 0b0000_0000_0000_0000_0000_0000_0000_0000
-		// --0mai-0000-0000-0000-000*-****-****-****
+		long cardsInt = 0;
 
-		int flag = 0;
-		int playingCombination = 0;
+		int flagFlushH = 0, flagFlushK = 0, flagFlushS = 0, flagFlushC = 0;
+		int constellationFlushH = 0, constellationFlushK = 0, constellationFlushS = 0, constellationFlushC = 0;
+		int flagStraight = 0, constellationStraight = 0;
 
 		for (int image = 0; image < 13; image++) {
-			if ((playerHaveCards[player] & (currentSuit >> (image << 2))) != 0) {
-				flag++;
-//				playingCombination |= 1 << (12 - image);
-				playingCombination |= 0x00_1000 >> image;
+
+			// Flash
+			if ((playerHaveCards[player] & (0x01_0000_0000_0000L >> (image << 2))) != 0) {
+				flagFlushH++;
+				constellationFlushH |= 0x00_1000 >> image;
+			}
+			if ((playerHaveCards[player] & (0x02_0000_0000_0000L >> (image << 2))) != 0) {
+				flagFlushK++;
+				constellationFlushK |= 0x00_1000 >> image;
+			}
+			if ((playerHaveCards[player] & (0x04_0000_0000_0000L >> (image << 2))) != 0) {
+				flagFlushS++;
+				constellationFlushS |= 0x00_1000 >> image;
+			}
+			if ((playerHaveCards[player] & (0x08_0000_0000_0000L >> (image << 2))) != 0) {
+				flagFlushC++;
+				constellationFlushC |= 0x00_1000 >> image;
+			}
+
+			// for combos
+			if (currentSuit == 0x01_0000_0000_0000L) {
+				// Straight
+				if ((playerHaveCards[player] & (0x0F_0000_0000_0000L >> (image << 2))) != 0) {
+					if (flagStraight != 5) {
+						flagStraight++;
+						constellationStraight |= 0x00_1000 >> image;
+
+					}
+
+				} else if (flagStraight < 5) {
+					flagStraight = 0;
+					constellationStraight = 0;
+				}
+
+			} else if (currentSuit == 0x02_0000_0000_0000L) {
+
+			} else if (currentSuit == 0x04_0000_0000_0000L) {
+
+			} else {
+
 			}
 		}
-		if (flag > 4) {
-			playerWinCards[player] = 0x2000_0000 | playingCombination; // flush indicator
-//			playerWinCards[player] |= playingCombination;
+
+		if (flagFlushH > 4) {
+			if (flagStraight == 5 && (constellationFlushH & constellationStraight) == constellationStraight) {
+				playerWinCards[player] = 0x5000_0000 | constellationFlushH; // st_flaush
+			} else {
+				playerWinCards[player] = 0x2000_0000 | constellationFlushH; // flush indicator
+			}
 			return true;
+		} else if (flagFlushK > 4) {
+			if (flagStraight == 5 && (constellationFlushK & constellationStraight) == constellationStraight) {
+				playerWinCards[player] = 0x5000_0000 | constellationFlushK; // st_flaush
+			} else {
+				playerWinCards[player] = 0x2000_0000 | constellationFlushK; // flush indicator
+			}
+			return true;
+		} else if (flagFlushS > 4) {
+			if (flagStraight == 5 && (constellationFlushS & constellationStraight) == constellationStraight) {
+				playerWinCards[player] = 0x5000_0000 | constellationFlushS; // st_flaush
+			} else {
+				playerWinCards[player] = 0x2000_0000 | constellationFlushS; // flush indicator
+			}
+			return true;
+		} else if (flagFlushC > 4) {
+			if (flagStraight == 5 && (constellationFlushC & constellationStraight) == constellationStraight) {
+				playerWinCards[player] = 0x5000_0000 | constellationFlushC; // st_flaush
+			} else {
+				playerWinCards[player] = 0x2000_0000 | constellationFlushC; // flush indicator
+			}
+			return true;
+		} else if (flagStraight == 5) {
+			playerWinCards[player] = 0x1000_0000 | constellationStraight; // straight
 		}
 		return false;
 	}
 
 	private static void checkStraight() {
-		
-		int highCard = 0, straight = 0, playingCombination = 0;
-		
-		boolean isAss = true;
+		// 0x0F_0000_0000_0000 : all Asses
+		// 0x00_F000_0000_0000 : all Kings
+		// 0x00_0F00_0000_0000 : all Queens
+		// 0x00_00F0_0000_0000 : all Jacks
+		// 0x00_000F_0000_0000 : all Tens
+
+		int highCard = 0, step = 0;
 
 		for (int player = 0; player < playerHaveCards.length; player++) {
-			
-			if ((playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) { // A
-				straight++;
-				playingCombination = 0x00_1000;
-			} else {
-				isAss = false;
-			}
-			if ((playerHaveCards[player] & 0x0_F000_0000_0000L) != 0) { // K
-				straight++;
-				playingCombination |= 0x00_0800;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0F00_0000_0000L) != 0) { // Q
-				straight++;
-				playingCombination |= 0x00_0400;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_00F0_0000_0000L) != 0) { // J
-				straight++;
-				playingCombination |= 0x00_0200;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_000F_0000_0000L) != 0) { // T
-				straight++;
-				playingCombination |= 0x00_0100;
-				if (straight == 5) highCard = 8;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0000_F000_0000L) != 0) { // 9
-				straight++;
-				playingCombination |= 0x00_0080;
-				if (highCard == 0 && straight == 5) highCard = 7;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0000_0F00_0000L) != 0) { // 8
-				straight++;
-				playingCombination |= 0x00_0040;
-				if (highCard == 0 && straight == 5) highCard = 6;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0000_00F0_0000L) != 0) { // 7
-				straight++;
-				playingCombination |= 0x00_0020;
-				if (highCard == 0 && straight == 5) highCard = 5;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0000_000F_0000L) != 0) { // 6
-				straight++;
-				playingCombination |= 0x00_0010;
-				if (highCard == 0 && straight == 5) highCard = 4;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if (isAss && (playerHaveCards[player] & 0x00_0000_0000_F000L) != 0) { // 5
-				straight++;
-				playingCombination |= 0x00_0008;
-				if (highCard == 0 && straight == 5) highCard = 3;
-			} else {
-				
-			}
-			if ((playerHaveCards[player] & 0x00_0000_0000_0F00L) != 0) { // 4
-				straight++;
-				playingCombination |= 0x00_0004;
-				if (highCard == 0 && straight == 5) highCard = 2;
-			} else {
-				
-			}
-			if ((playerHaveCards[player] & 0x00_0000_0000_00F0L) != 0) { // 3
-				straight++;
-				playingCombination |= 0x00_0002;
-				if (highCard == 0 && straight == 5) highCard = 1;
-			} else {
-				
-			}
-			if ((playerHaveCards[player] & 0x00_0000_0000_000FL) != 0) { // 2
-				straight++;
-				playingCombination |= 0x00_0001;
-			} else {
-				
-			}
-			
-			if (highCard != 0) {
-				
-			}
-			
 
-		}
-	}
-	
-	private static void checkStraight2() {
-		
-		int highCard = 0, straight = 0, playingCombination = 0;
-		
-		boolean isAss = true;
+			for (int image = 0; image < 9; image++) {
 
-		for (int player = 0; player < playerHaveCards.length; player++) {
-			
-			if ((playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) { // A
-				straight++;
-				playingCombination = 0x00_1000;
-			} else {
-				isAss = false;
-			}
-			if ((playerHaveCards[player] & 0x0_F000_0000_0000L) != 0) { // K
-				straight++;
-				playingCombination |= 0x00_0800;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0F00_0000_0000L) != 0) { // Q
-				straight++;
-				playingCombination |= 0x00_0400;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_00F0_0000_0000L) != 0) { // J
-				straight++;
-				playingCombination |= 0x00_0200;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_000F_0000_0000L) != 0) { // T
-				straight++;
-				playingCombination |= 0x00_0100;
-				if (straight == 5) highCard = 8;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0000_F000_0000L) != 0) { // 9
-				straight++;
-				playingCombination |= 0x00_0080;
-				if (highCard == 0 && straight == 5) highCard = 7;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0000_0F00_0000L) != 0) { // 8
-				straight++;
-				playingCombination |= 0x00_0040;
-				if (highCard == 0 && straight == 5) highCard = 6;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0000_00F0_0000L) != 0) { // 7
-				straight++;
-				playingCombination |= 0x00_0020;
-				if (highCard == 0 && straight == 5) highCard = 5;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if ((playerHaveCards[player] & 0x00_0000_000F_0000L) != 0) { // 6
-				straight++;
-				playingCombination |= 0x00_0010;
-				if (highCard == 0 && straight == 5) highCard = 4;
-			} else {
-				straight = 0;
-				playingCombination = 0;
-			}
-			if (isAss && (playerHaveCards[player] & 0x00_0000_0000_F000L) != 0) { // 5
-				straight++;
-				playingCombination |= 0x00_0008;
-				if (highCard == 0 && straight == 5) highCard = 3;
-			} else {
-				
-			}
-			if ((playerHaveCards[player] & 0x00_0000_0000_0F00L) != 0) { // 4
-				straight++;
-				playingCombination |= 0x00_0004;
-				if (highCard == 0 && straight == 5) highCard = 2;
-			} else {
-				
-			}
-			if ((playerHaveCards[player] & 0x00_0000_0000_00F0L) != 0) { // 3
-				straight++;
-				playingCombination |= 0x00_0002;
-				if (highCard == 0 && straight == 5) highCard = 1;
-			} else {
-				
-			}
-			if ((playerHaveCards[player] & 0x00_0000_0000_000FL) != 0) { // 2
-				straight++;
-				playingCombination |= 0x00_0001;
-			} else {
-				
-			}
-			
-			if (highCard != 0) {
-				
-			}
-			
+				step = image << 2;
 
+				if ((playerHaveCards[player] & (0x0F_0000_0000_0000L >> step)) != 0
+						&& (playerHaveCards[player] & (0x00_F000_0000_0000L >> step)) != 0
+						&& (playerHaveCards[player] & (0x00_0F00_0000_0000L >> step)) != 0
+						&& (playerHaveCards[player] & (0x00_00F0_0000_0000L >> step)) != 0
+						&& (playerHaveCards[player] & (0x00_000F_0000_0000L >> step)) != 0) {
+
+					highCard = 0x00_1F00 >> image;
+
+					if ((playerWinCards[player] & 0x2000_0000) == 0x2000_0000) { // flush indicator
+						if ((playerWinCards[player] & highCard) == highCard) {
+							playerWinCards[player] = 0x5000_0000; // straitgh flush
+							playerWinCards[player] |= highCard;
+							break;
+						}
+						continue;
+					}
+					playerWinCards[player] = 0x1000_0000; // straight
+					playerWinCards[player] |= highCard;
+					break;
+				}
+			}
+			// find 5 4 3 2 A
+			if ((playerWinCards[player] & 0x1000_0000) == 0 // straight
+					&& (playerWinCards[player] & 0x5000_0000) == 0 // straight flush
+					&& (playerHaveCards[player] & 0x00_0000_0000_F000L) != 0 // 5
+					&& (playerHaveCards[player] & 0x00_0000_0000_0F00L) != 0 // 4
+					&& (playerHaveCards[player] & 0x00_0000_0000_00F0L) != 0 // 3
+					&& (playerHaveCards[player] & 0x00_0000_0000_000FL) != 0 // 2
+					&& (playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) { // A
+
+				if ((playerWinCards[player] & 0x2000_0000) == 0x2000_0000) { // flush indicator
+
+					if ((playerWinCards[player] & 0x100F) == 0x100F) { // 5 4 3 2 A
+						playerWinCards[player] = 0x5000_100F; // royal flush
+						return;
+					}
+				}
+				playerWinCards[player] = 0x1000_000F; // straight 5 4 3 2 (A)
+			}
 		}
 	}
 
@@ -453,7 +364,6 @@ public class EquityCalculatorFast {
 			if ((playerWinCards[player] & 0x5000_0000) == 0x5000_0000) { // straight flush
 				continue;
 			}
-
 			for (int image = 0; image < 13; image++) {
 
 				if ((playerHaveCards[player] & (0x0F_0000_0000_0000L >> (image << 2))) == 0) {
@@ -464,9 +374,7 @@ public class EquityCalculatorFast {
 					playerWinCards[player] = 0x4000_0000 | (13 - image);
 					break;
 
-				} else
-
-				if ((playerHaveCards[player] & (0x07_0000_0000_0000L >> (image << 2))) // 0b0111
+				} else if ((playerHaveCards[player] & (0x07_0000_0000_0000L >> (image << 2))) // 0b0111
 						== 0x07_0000_0000_0000L >> (image << 2)
 						|| (playerHaveCards[player] & (0x0B_0000_0000_0000L >> (image << 2))) // 0b1011
 								== 0x0B_0000_0000_0000L >> (image << 2)
@@ -477,7 +385,6 @@ public class EquityCalculatorFast {
 
 					if (pairHit > 0) {
 						playingCombination |= (13 - image) << 24;
-
 						playerWinCards[player] |= (playingCombination | 0x3000_0000) & 0x3FF0_0000;
 						break;
 
@@ -486,11 +393,10 @@ public class EquityCalculatorFast {
 
 					} else if (threeHit == 1) {
 						playingCombination |= (13 - image) << 20;
-
 						playerWinCards[player] |= (playingCombination | 0x3000_0000) & 0x3FF0_0000;
 						break;
-					}
 
+					}
 					threeHit++;
 
 				} else if ((playerHaveCards[player] & (0x03_0000_0000_0000L >> (image << 2))) // 0b0011
@@ -508,7 +414,6 @@ public class EquityCalculatorFast {
 
 					if (threeHit == 1) {
 						playingCombination |= (13 - image) << 20;
-
 						playerWinCards[player] |= (playingCombination | 0x3000_0000) & 0x3FF0_0000;
 						break;
 
@@ -521,19 +426,16 @@ public class EquityCalculatorFast {
 					} else {
 						if ((playingCombination & 0x0F_FFFF) == 0) {
 							playingCombination |= 1 << (12 - image);
-						}
 
+						}
 						break;
 					}
-
 					pairHit++;
 
 				} else {
 					playingCombination |= 1 << (12 - image);
-
 				}
 			}
-
 			if ((playerWinCards[player] & 0xF000_0000) == 0) { // straight // flush // full house
 				playerWinCards[player] = playingCombination;
 			}

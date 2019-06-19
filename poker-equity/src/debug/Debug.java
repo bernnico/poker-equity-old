@@ -2,7 +2,8 @@ package debug;
 
 public class Debug {
 	
-	private long runTimeNono[] = new long[10];
+//	private long runTimeNono[] = new long[10];
+	
 	private static int stFlush;
 	private static int four;
 	private static int fullHouse;
@@ -27,11 +28,13 @@ public class Debug {
 		System.out.printf("fullHouse\t%f\n", 100.0 * fullHouse / size);
 		System.out.printf("four\t\t%f\n", 100.0 * four / size);
 		System.out.printf("stFlush\t\t%f\n", 100.0 * stFlush / size);
+		System.out.printf("all\t\t%f\n",
+				100.0 * (high + pair + twoPair + three + straight + flush + fullHouse + four + stFlush) / size);
 	}
 	
-	public static void printWinLose(int size, int playerEquity) {
+	public static void printWinLose(int size, int playerEquity, int player) {
 		
-		System.out.printf("payer1 wins in\t%f\n", 100.0 * playerEquity / size);
+		System.out.printf("payer%d wins in\t%f\n", player,  100.0 * playerEquity / size);
 //		System.out.printf("payer1 loses in\t%f\n", 100.0 * playerEquity / size);
 	}
 	
@@ -51,7 +54,7 @@ public class Debug {
 		// --0mia-_set-htwo-ltwo-000k-kick-kick-kick
 		else if ((playerWinCards & 0x0F00_0000) != 0 && (playerWinCards & 0xF0FF_0000) == 0)
 			three++;
-		else if ((playerWinCards & 0x000F_0000) != 0 && (playerWinCards & 0xFF00_0000) == 0)
+		else if ((playerWinCards & 0x00F0_0000) != 0 && (playerWinCards & 0x000F_0000) != 0)
 			twoPair++;
 		else if ((playerWinCards & 0x00F0_0000) != 0 && (playerWinCards & 0xFF0F_0000) == 0)
 			pair++;
@@ -60,3 +63,10 @@ public class Debug {
 	}
 
 }
+
+
+
+
+
+
+
