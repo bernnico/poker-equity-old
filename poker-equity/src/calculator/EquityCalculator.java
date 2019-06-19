@@ -322,14 +322,10 @@ public class EquityCalculator {
 					break;
 				} 
 				// three
-				else if ((playerHaveCards[player] & (0x07_0000_0000_0000L >> (image << 2)))   // 0b0111
-						== 0x07_0000_0000_0000L >> (image << 2)
-						|| (playerHaveCards[player] & (0x0B_0000_0000_0000L >> (image << 2))) // 0b1011
-								== 0x0B_0000_0000_0000L >> (image << 2)
-						|| (playerHaveCards[player] & (0x0D_0000_0000_0000L >> (image << 2))) // 0b1101
-								== 0x0D_0000_0000_0000L >> (image << 2)
-						|| (playerHaveCards[player] & (0x0E_0000_0000_0000L >> (image << 2))) // 0b1110
-								== 0x0E_0000_0000_0000L >> (image << 2)) {
+				else if (currentImage == 0b0111
+						|| currentImage == 0b1011
+						|| currentImage == 0b1101
+						|| currentImage == 0b1110) {
 
 					if (pairHit != 0) {
 						// set fullhouse
@@ -351,18 +347,12 @@ public class EquityCalculator {
 					
 				} 
 				// two
-				else if ((playerHaveCards[player] & (0x03_0000_0000_0000L >> (image << 2))) // 0b0011
-						== 0x03_0000_0000_0000L >> (image << 2)
-						|| (playerHaveCards[player] & (0x05_0000_0000_0000L >> (image << 2))) // 0b0101
-								== 0x05_0000_0000_0000L >> (image << 2)
-						|| (playerHaveCards[player] & (0x06_0000_0000_0000L >> (image << 2))) // 0b0110
-								== 0x06_0000_0000_0000L >> (image << 2)
-						|| (playerHaveCards[player] & (0x09_0000_0000_0000L >> (image << 2))) // 0b1001
-								== 0x09_0000_0000_0000L >> (image << 2)
-						|| (playerHaveCards[player] & (0x0A_0000_0000_0000L >> (image << 2))) // 0b1010
-								== 0x0A_0000_0000_0000L >> (image << 2)
-						|| (playerHaveCards[player] & (0x0C_0000_0000_0000L >> (image << 2))) // 0b1100
-								== 0x0C_0000_0000_0000L >> (image << 2)) {
+				else if (currentImage == 0b0011
+						|| currentImage == 0b0101
+						|| currentImage == 0b0110
+						|| currentImage == 0b1001
+						|| currentImage == 0b1010
+						|| currentImage == 0b1100) {
 					
 					if (threeHit != 0) {
 						// set fullhouse
@@ -382,8 +372,6 @@ public class EquityCalculator {
 						noCombo++;
 						
 					}
-					
-					
 				}
 				// high cards
 				else {
