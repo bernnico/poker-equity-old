@@ -128,6 +128,7 @@ public class EquityCalculator {
 	}
 
 	public static void run3() {
+		
 		Card card = new Card();
 		long player1 = card.getCardsAsLong("2c3s");
 		long player2 = card.getCardsAsLong("Ts9c");
