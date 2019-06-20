@@ -6,11 +6,10 @@ import card.BoardsList;
 import card.Card;
 import card.Image;
 import card.Suit;
-import debug.Debug;
 
 public class EquityCalculator {
 	private static long boardCards;
-	private static long playerHands[];
+//	private static long playerHands[];
 	private static int playerEquity[];
 	private static long playerHaveCards[];
 	private static int playerBestCards[];
@@ -30,20 +29,20 @@ public class EquityCalculator {
 	public static void main(String[] args) throws InterruptedException {
 		playerBestCards = new int[3]; // last index is ties
 		playerEquity = new int[3];
-		playerHands = new long[2];
+//		playerHands = new long[2];
 		playerHaveCards = new long[2];
 		
 //		for (int i = 0; i < 100; i++)
-			run2();
+			run3();
 	}
 
 //	@Override
 	public static void run2() {
 		Card card = new Card();
-		long player1 = card.getCardAsLong(Image._A, Suit.c) 
-				     | card.getCardAsLong(Image._K, Suit.s);
-		long player2 = card.getCardAsLong(Image._T, Suit.c)
-				     | card.getCardAsLong(Image._T, Suit.s);
+		long player1 = card.getCardsAsLong(Image._2, Suit.c) 
+				     | card.getCardsAsLong(Image._3, Suit.s);
+		long player2 = card.getCardsAsLong(Image._T, Suit.c)
+				     | card.getCardsAsLong(Image._9, Suit.s);
 
 		BoardsList gen = new BoardsList();
 		gen.generateBourdsList(player1, player2);
@@ -53,17 +52,21 @@ public class EquityCalculator {
 		playerHands[1] = player2;
 		
 		long boardCards = 0;
-		
+		System.out.println(".");
 		while (gen.isEmpty()) { }
 		long timeStart = System.nanoTime();
 		int size = 0;
 
 		
 		while (size != 1712304) {
+//			System.out.println(".");
 			// CPU: i5 4200u
-			// evaluate time (48 nCp 5) in 400.000.000n
+			// evaluate time (1 vs 1) in 480.000.000n
 
 			boardCards = gen.getNext(size++);
+			
+//			if ((boardCards | player1 | player2) != (boardCards | player1 | player2) )
+//				System.out.println("stop!!!!!!!!");
 
 			playerHaveCards[0] = playerHands[0] | boardCards;
 			playerHaveCards[1] = playerHands[1] | boardCards;
@@ -109,6 +112,7 @@ public class EquityCalculator {
 			}
 		}
 		
+		
 		long timeStop = System.nanoTime()  - timeStart;
 		System.out.printf("complett: %,d\n", timeStop);
 		
@@ -125,23 +129,14 @@ public class EquityCalculator {
 
 	public static void run3() {
 		Card card = new Card();
+		long player1 = card.getCardsAsLong("2c3s");
+		long player2 = card.getCardsAsLong("Ts9c");
 
-		long player1 = card.getCardAsLong(Image._A, Suit.c) 
-			         | card.getCardAsLong(Image._K, Suit.s);
-		long player2 = card.getCardAsLong(Image._T, Suit.c)
-			         | card.getCardAsLong(Image._T, Suit.s);
-
-		boardCards = card.getCardAsLong(Image._6, Suit.h) 
-				   | card.getCardAsLong(Image._6, Suit.k)
-				   | card.getCardAsLong(Image._2, Suit.s) 
-				   | card.getCardAsLong(Image._3, Suit.s)
-				   | card.getCardAsLong(Image._3, Suit.c);
+		boardCards = card.getCardsAsLong("8d7d6d");
 		
 		System.out.println("player1: " + card.getCardAsString(player1));
 		System.out.println("player2: " + card.getCardAsString(player2));
 		System.out.println("boardt: " + card.getCardAsString(boardCards));
-		
-		
 		
 		playerHaveCards[0] = player1 | boardCards;
 		playerHaveCards[1] = player2 | boardCards;
@@ -158,32 +153,41 @@ public class EquityCalculator {
 		
 		System.out.println("payer1 win " + (playerBestCards[0] > playerBestCards[1]));
 		System.out.println("tiel " + (playerBestCards[0] == playerBestCards[1]));
-		
+		System.out.println(0x5000003e > 0x200000bc);
 	}
 
 	private static void checkFlush() {
 
 		for (int player = 0; player < playerHaveCards.length; player++) {
+			long test = 0x01_1111_1111_1111L;
+			if ((playerHaveCards[player] & test) != 0
+					&& (playerHaveCards[player] & test << 1) != 0
+					&& (playerHaveCards[player] & test << 2) != 0
+					&& (playerHaveCards[player] & test << 3) != 0) {
+				continue;
+			}
+			
+			/*
 			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
 					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
 					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
 					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
 				continue;
 			}
-
+*/
 			boolean flushFound = false;
 
-			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0) {
-				flushFound = setFlushIfFound(player, 0x01_0000_0000_0000L); // Ah
+			if ((playerHaveCards[player] & test) != 0) {
+				flushFound = setFlushIfFound(player, 0x01L << (12 << 2)); // Ah
 			}
-			if (!flushFound && (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0) {
-				flushFound = setFlushIfFound(player, 0x02_0000_0000_0000L); // Ak
+			if (!flushFound && (playerHaveCards[player] & test << 1) != 0) {
+				flushFound = setFlushIfFound(player, 0x02L << (12 << 2)); // Ak
 			}
-			if (!flushFound && (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0) {
-				flushFound = setFlushIfFound(player, 0x04_0000_0000_0000L); // As
+			if (!flushFound && (playerHaveCards[player] & test << 2) != 0) {
+				flushFound = setFlushIfFound(player, 0x04L << (12 << 2)); // As
 			}
-			if (!flushFound && (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
-				setFlushIfFound(player, 0x08_0000_0000_0000L); // Ac
+			if (!flushFound && (playerHaveCards[player] & test << 3) != 0) {
+				setFlushIfFound(player, 0x08L << (12 << 2)); // Ac
 			}
 		}
 	}
@@ -214,6 +218,7 @@ public class EquityCalculator {
 				step = image << 2;
 				plhand = playerHaveCards[player];
 				
+				// straight, highest first
 				if ((plhand & (0x0F_0000_0000_0000L >> step)) != 0
 						&& (plhand & (0x00_F000_0000_0000L >> step)) != 0
 						&& (plhand & (0x00_0F00_0000_0000L >> step)) != 0
@@ -222,48 +227,53 @@ public class EquityCalculator {
 					
 					highCard = 0x00_1F00 >> image;
 					
-					if ((playerBestCards[player] & 0x2000_0000) == 0x2000_0000) { // flush indicator
+					// straight and flush
+					if ((playerBestCards[player] & 0x2000_0000) == 0x2000_0000) {
 						if ((playerBestCards[player] & highCard) == highCard) {
-							playerBestCards[player] = 0x5000_0000; // straitgh flush
+							playerBestCards[player] = 0x5000_0000;
 							playerBestCards[player] |= highCard;
-							break;
+							break; // straight flush
 						}
-						continue;
+						continue; // straight < flush 
 					}
-					playerBestCards[player] = 0x1000_0000; // straight
-					playerBestCards[player] |= highCard;
-					break;
+					// straight founded and no flush
+					else {
+						playerBestCards[player] = 0x1000_0000;
+						playerBestCards[player] |= highCard;
+						break; // highest straight without flush
+					}
 				}
 			}
-			// find 5 4 3 2 A
-			if (highCard == 0 // straight
+			// check lowest straight 5 4 3 2 A
+			if ((playerBestCards[player] & 0x5000_0000) != 0x5000_0000 // no straight flush
 					&& (plhand & 0x0F_0000_0000_0000L) != 0 // A
 					&& (plhand & 0x00_0000_0000_F000L) != 0 // 5
 					&& (plhand & 0x00_0000_0000_0F00L) != 0 // 4
 					&& (plhand & 0x00_0000_0000_00F0L) != 0 // 3
 					&& (plhand & 0x00_0000_0000_000FL) != 0) { // 2
 				
-				if ((playerBestCards[player] & 0x2000_0000) == 0x2000_0000) { // flush indicator
+				// straight and flush
+				if ((playerBestCards[player] & 0x2000_0000) == 0x2000_0000) {
 					if ((playerBestCards[player] & 0x100F) == 0x100F) { // 5 4 3 2 A
 						playerBestCards[player] = 0x5000_100F; // royal flush
-
+						continue; // straight flush, go to next player
 					}
-					continue;
+				} 
+				// no highest straight
+				else if ((playerBestCards[player] & 0x1000_0000) != 0x1000_0000) {
+					playerBestCards[player] = 0x1000_100F; // straight 5 4 3 2 (A)
 				}
-				playerBestCards[player] = 0x1000_000F; // straight 5 4 3 2 (A)
 			}
 			
 			// flush correction
 			if ((playerBestCards[player] & 0x2000_0000) == 0x2000_0000) {
 				int j = 0;
-				
 				for (int i = 0; i < 13; i++) {
 					if ((playerBestCards[player] & (1 << (12 - i))) != 0) {
 						if (j == 5) {
 							playerBestCards[player] &= ~(0x00_1FFF >> i);
 							break;
 						}
-							
 						j++;
 					}
 				}
@@ -282,7 +292,7 @@ public class EquityCalculator {
 		for (int player = 0; player < playerHaveCards.length; player++) {
 			
 			// straight flush
-			if ((playerBestCards[player] & 0x5000_0000) == 0x5000_0000) {
+			if ((playerBestCards[player] & 0xF000_0000) == 0x5000_0000) {
 				continue;
 			}
 			
@@ -299,8 +309,8 @@ public class EquityCalculator {
 				// non Hit
 				if (currentImage == 0) {
 					continue;
-					
 				} 
+				
 				// four  + + + + + + + + + + + + + + + + + + +
 				else if (currentImage == 0b1111) {
 					
@@ -395,7 +405,6 @@ public class EquityCalculator {
 				
 				// two pair
 				if ((bestCombo & 0x00F0_0000) != 0 && (bestCombo & 0x000F_0000) != 0) {	
-					int j = 0;
 					for (int i = 0; i < 13; i++) {
 						if ((cardsWithoutHit & (1 << (12 - i))) != 0) {
 							playerBestCards[player] |= 1 << (12 - i);

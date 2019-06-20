@@ -34,20 +34,27 @@ public class BoardsList extends Thread {
 		
 		Card card = new Card();
 			
-		long card5 = card.getCardAsLong(Image._2, Suit.h);
-		long card4 = card.getCardAsLong(Image._2, Suit.k);
-		long card3 = card.getCardAsLong(Image._2, Suit.s);
-		long card2 = card.getCardAsLong(Image._2, Suit.c);
-		long card1 = card.getCardAsLong(Image._3, Suit.h);
+		long card5 = card.getCardsAsLong(Image._2, Suit.h);
+		long card4 = card.getCardsAsLong(Image._2, Suit.d);
+		long card3 = card.getCardsAsLong(Image._2, Suit.s);
+		long card2 = card.getCardsAsLong(Image._2, Suit.c);
+		long card1 = card.getCardsAsLong(Image._3, Suit.h);
 		board = card1|card2|card3|card4|card5;
-		add(board);
+		
+		if ((cardsInGame & board) == 0) {
+//			add(board);
+			
+			list2[size] = board;
+			size++;
+		}
+		
 			
 		long lastBoard;
-		long lastCard5 = card.getCardAsLong(Image._K, Suit.c);
-		long lastCard4 = card.getCardAsLong(Image._A, Suit.h);
-		long lastCard3 = card.getCardAsLong(Image._A, Suit.k);
-		long lastCard2 = card.getCardAsLong(Image._A, Suit.s);
-		long lastCard1 = card.getCardAsLong(Image._A, Suit.c);
+		long lastCard5 = card.getCardsAsLong(Image._K, Suit.c);
+		long lastCard4 = card.getCardsAsLong(Image._A, Suit.h);
+		long lastCard3 = card.getCardsAsLong(Image._A, Suit.d);
+		long lastCard2 = card.getCardsAsLong(Image._A, Suit.s);
+		long lastCard1 = card.getCardsAsLong(Image._A, Suit.c);
 		lastBoard = lastCard1|lastCard2|lastCard3|lastCard4|lastCard5;
 	
 		while (board != lastBoard) {
@@ -88,7 +95,7 @@ public class BoardsList extends Thread {
 				size++;
 			}
 		}
-		size++;
+//		size++;
 		long timeStop = System.nanoTime()  - timeStart;
 		System.out.printf("generator: %,d\n", timeStop);
 	}
@@ -127,17 +134,19 @@ public class BoardsList extends Thread {
 	public boolean isEmpty() {
 		if (isParallel)
 			return boardList.isEmpty();
-		else
+		else {
 //			return list.isEmpty();
+
 			return !(size == 1712304);
+		}
 	}
 	
-	private boolean add(long board) {
-		if (isParallel)
-			return boardList.add(board);
-		else
-			return list.add(board);
-	}
+//	private boolean add(long board) {
+//		if (isParallel)
+//			return boardList.add(board);
+//		else
+//			return list.add(board);
+//	}
 	
 }
 
