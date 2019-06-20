@@ -42,9 +42,9 @@ public class Card {
 			}
 			
 			switch (st.charAt(i+1)) {
-			case 'h': su = 0; break;
-			case 'd': su= 1; break;
-			case 's': su = 2; break;
+			case 's': su = 0; break;
+			case 'h': su = 1; break;
+			case 'd': su = 2; break;
 			case 'c': su = 3; break;
 			default: throw new IllegalArgumentException();
 			}

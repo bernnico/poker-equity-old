@@ -133,7 +133,7 @@ public class EquityCalculator {
 		long player1 = card.getCardsAsLong("2c3s");
 		long player2 = card.getCardsAsLong("Ts9c");
 
-		boardCards = card.getCardsAsLong("8d7d6d");
+		boardCards = card.getCardsAsLong("8h7d6s5c");
 		
 		System.out.println("player1: " + card.getCardAsString(player1));
 		System.out.println("player2: " + card.getCardAsString(player2));
