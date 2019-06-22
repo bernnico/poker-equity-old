@@ -6,7 +6,7 @@ public class Card {
 
 	public Card() {
 		image = Image._2;
-		suit = Suit.h;
+		suit = Suit.s;
 	}
 
 	public long getCardsAsLong(Image image, Suit suit) {
@@ -112,9 +112,50 @@ public class Card {
 	
 	public String getBestHand(int cards) {
 		String ret = "";
+		
+		if ((cards & 0xF000_0000) == 0x1000_0000) {
+			ret = getStraightAsString(cards);
+		}
+		else if ((cards & 0xF000_0000) == 0x2000_0000) {
+			ret = getFlushAsString(cards);
+		}
+		else if ((cards & 0xF000_0000) == 0x3000_0000) {
+			ret = getFullhouseAsString(cards);
+		}
+		else if ((cards & 0xF000_0000) == 0x4000_0000) {
+			ret = getFourAsString(cards);
+		}
+		else if ((cards & 0xF000_0000) == 0x5000_0000) {
+			ret = getStFlushAsString(cards);
+		}
 
 		
 		return ret;
+	}
+
+	private String getStFlushAsString(int cards) {	
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private String getFourAsString(int cards) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private String getFullhouseAsString(int cards) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private String getFlushAsString(int cards) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private String getStraightAsString(int cards) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

@@ -40,15 +40,16 @@ public class Debug {
 	
 	
 	public static void addPlayerCards(long playerWinCards) {
-		if ((playerWinCards & 0x5000_0000) == 0x5000_0000)
+		
+		if ((playerWinCards & 0xF000_0000) == 0x5000_0000)
 			stFlush++;
-		else if ((playerWinCards & 0x4000_0000) == 0x4000_0000)
+		else if ((playerWinCards & 0xF000_0000) == 0x4000_0000)
 			four++;
-		else if ((playerWinCards & 0x3000_0000) == 0x3000_0000)
+		else if ((playerWinCards & 0xF000_0000) == 0x3000_0000)
 			fullHouse++;
-		else if ((playerWinCards & 0x2000_0000) == 0x2000_0000)
+		else if ((playerWinCards & 0xF000_0000) == 0x2000_0000)
 			flush++;
-		else if ((playerWinCards & 0x1000_0000) == 0x1000_0000)
+		else if ((playerWinCards & 0xF000_0000) == 0x1000_0000)
 			straight++;
 
 		// --0mia-_set-htwo-ltwo-000k-kick-kick-kick

@@ -34,11 +34,11 @@ public class BoardsList extends Thread {
 		
 		Card card = new Card();
 			
-		long card5 = card.getCardsAsLong(Image._2, Suit.h);
-		long card4 = card.getCardsAsLong(Image._2, Suit.d);
-		long card3 = card.getCardsAsLong(Image._2, Suit.s);
+		long card5 = card.getCardsAsLong(Image._2, Suit.s);
+		long card4 = card.getCardsAsLong(Image._2, Suit.h);
+		long card3 = card.getCardsAsLong(Image._2, Suit.d);
 		long card2 = card.getCardsAsLong(Image._2, Suit.c);
-		long card1 = card.getCardsAsLong(Image._3, Suit.h);
+		long card1 = card.getCardsAsLong(Image._3, Suit.s);
 		board = card1|card2|card3|card4|card5;
 		
 		if ((cardsInGame & board) == 0) {
@@ -48,12 +48,11 @@ public class BoardsList extends Thread {
 			size++;
 		}
 		
-			
 		long lastBoard;
 		long lastCard5 = card.getCardsAsLong(Image._K, Suit.c);
-		long lastCard4 = card.getCardsAsLong(Image._A, Suit.h);
-		long lastCard3 = card.getCardsAsLong(Image._A, Suit.d);
-		long lastCard2 = card.getCardsAsLong(Image._A, Suit.s);
+		long lastCard4 = card.getCardsAsLong(Image._A, Suit.s);
+		long lastCard3 = card.getCardsAsLong(Image._A, Suit.h);
+		long lastCard2 = card.getCardsAsLong(Image._A, Suit.d);
 		long lastCard1 = card.getCardsAsLong(Image._A, Suit.c);
 		lastBoard = lastCard1|lastCard2|lastCard3|lastCard4|lastCard5;
 	
