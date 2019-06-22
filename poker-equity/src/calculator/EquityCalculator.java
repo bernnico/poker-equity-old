@@ -33,6 +33,7 @@ public class EquityCalculator {
 		
 //		for (int i = 0; i < 100; i++)
 			run2();
+		
 	}
 
 //	@Override
@@ -182,13 +183,14 @@ public class EquityCalculator {
 		int highCard = 0, step = 0;
 		long plhand = 0;
 
-		for (int player = 0; player < playerHaveCards.length; player++) {	
+		for (int player = 0; player < playerHaveCards.length; player++) {
+			plhand = playerHaveCards[player];
+			
 			for (int image = 0; image < 9; image++) {
 				step = image << 2;
-				plhand = playerHaveCards[player];
 				
 				// straight, highest first
-				if ((plhand & (0x0F_0000_0000_0000L >> step)) != 0
+				if (       (plhand & (0x0F_0000_0000_0000L >> step)) != 0
 						&& (plhand & (0x00_F000_0000_0000L >> step)) != 0
 						&& (plhand & (0x00_0F00_0000_0000L >> step)) != 0
 						&& (plhand & (0x00_00F0_0000_0000L >> step)) != 0
@@ -337,10 +339,14 @@ public class EquityCalculator {
 					}
 				}
 				// three
-				else if (currentImage == 0b0111
+				else 
+					/*
+					if (currentImage == 0b0111
 						|| currentImage == 0b1011
 						|| currentImage == 0b1101
-						|| currentImage == 0b1110) {
+						|| currentImage == 0b1110) 
+				*/
+				{
 
 					if (pairHit != 0) {
 						// set fullhouse
@@ -350,7 +356,6 @@ public class EquityCalculator {
 
 					} else if (threeHit != 0) {
 						// set fullhouse
-//						bestCombo >>= 4;
 						bestCombo |= (13 - image) << 20;
 						playerBestCards[player] |= (bestCombo | 0x5000_0000) & 0x5FF0_0000;
 						break;
