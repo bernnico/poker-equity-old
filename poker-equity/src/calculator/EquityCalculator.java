@@ -39,8 +39,9 @@ public class EquityCalculator {
 //	@Override
 	public static void run2() {
 		Card card = new Card();
-		long player1 = card.getCardsAsLong("5c6s") ;
-		long player2 = card.getCardsAsLong("3c4s");
+		long player1 = card.getCardsAsLong("Qd6s") ;
+		long player2 = card.getCardsAsLong("Ac3h");
+		long dead = card.getCardsAsLong("AcAsAhAd");
 
 		BoardsList gen = new BoardsList();
 		gen.generateBourdsList(player1, player2);
@@ -51,12 +52,16 @@ public class EquityCalculator {
 		
 		long boardCards = 0;
 		
-		while (gen.isEmpty()) { }
+		for (int i = 0; i < 10000; i++) { }
 		long timeStart = System.nanoTime();
 		int size = 0;
 
+		int i = 1;
+		int j = gen.size();
 		
-		while (size != 1712304) {
+		System.out.println(j);
+		
+		while (size != j) {
 			boardCards = gen.getNext(size++);
 
 			playerHaveCards[0] = playerHands[0] | boardCards;
@@ -69,10 +74,21 @@ public class EquityCalculator {
 			checkStraight();
 			checkCombos();
 
-			if (playerBestCards[0] > playerBestCards[1]) {
+			
+			 if (playerBestCards[0] > playerBestCards[1]) {
 				playerEquity[0]++;
 			} else if (playerBestCards[0] < playerBestCards[1]) {
-				playerEquity[1]++;	
+				playerEquity[1]++;
+//				
+//				if (i > 0 && i < 2_000 
+//						&& (playerBestCards[1] & 0xF000_0000) == 0x3000_0000 ) {
+//					System.out.printf("%s\t%d\t%x  vs  %x\n",
+//							card.getCardAsString(boardCards),
+//							i,
+//							playerBestCards[0],
+//							playerBestCards[1]);
+//				}			
+//				i++;		
 			}
 			else {
 				playerEquity[2]++;
@@ -80,14 +96,18 @@ public class EquityCalculator {
 			Debug.addPlayerCards(playerBestCards[0]);
 		}
 		
+		
 		long timeStop = System.nanoTime()  - timeStart;
 		System.out.printf("complett: %,d\n", timeStop);
 		
 		Debug.printAllHands(size);
-		System.out.println("size:\t\t" + size);
-		System.out.println("player0\t\t" + playerEquity[2]);
-		System.out.println("player1\t\t" + playerEquity[0]);
-		System.out.println("player2\t\t" + playerEquity[1]);
+		System.out.println("\nsize:\t" + size);
+		System.out.println("player0\t" + playerEquity[2]);
+		System.out.println("player1\t" + playerEquity[0]);
+		System.out.println("player2\t" + playerEquity[1]);
+		System.out.println(card.getCardAsString(player1) + " vs  "
+						+ card.getCardAsString(player2) + 
+						"  dead:" + card.getCardAsString(dead));
 		System.out.println(100.0 * playerEquity[2] / size);
 		System.out.println(100.0 * (0.5 * playerEquity[2] + playerEquity[0]) / size);
 		System.out.println(100.0 * (0.5 * playerEquity[2] + playerEquity[1]) / size);
@@ -96,14 +116,10 @@ public class EquityCalculator {
 	public static void run3() {
 		
 		Card card = new Card();
-		long player1 = card.getCardsAsLong("4c5s") ;
-		long player2 = card.getCardsAsLong("6c7s");
+		long player1 = card.getCardsAsLong("6c6s");
+		long player2 = card.getCardsAsLong("5c5s");
 
-		boardCards = card.getCardsAsLong( "Qh"
-										+ "Qd"
-										+ "5c"
-										+ "5d"
-										+ "6h");
+		boardCards = card.getCardsAsLong("7s7d5h3d2s");
 		
 		System.out.println("player1: " + card.getCardAsString(player1));
 		System.out.println("player2: " + card.getCardAsString(player2));
@@ -226,13 +242,13 @@ public class EquityCalculator {
 				// straight and flush
 				if ((playerBestCards[player] & 0x4000_0000) == 0x4000_0000) {
 					if ((playerBestCards[player] & 0x100F) == 0x100F) { // 5 4 3 2 A
-						playerBestCards[player] = 0x7000_100F; // royal flush
+						playerBestCards[player] = 0x7000_000F; // royal flush
 						continue; // straight flush, go to next player
 					}
 				} 
 				// no highest straight
 				else if ((playerBestCards[player] & 0x3000_0000) != 0x3000_0000) {
-					playerBestCards[player] = 0x3000_100F; // straight 5 4 3 2 (A)
+					playerBestCards[player] = 0x3000_000F; // straight 5 4 3 2 (A)
 				}
 			}
 			

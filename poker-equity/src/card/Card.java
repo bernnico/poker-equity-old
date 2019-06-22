@@ -65,16 +65,16 @@ public class Card {
 				suits = (int) ((cards & images) >> ((12 - i) << 2));
 
 				if ((0x01 & suits) == 0x01) {
-					string += image.getImage(12 - i) + suit.getSuit(0);
+					string += image.getImage(12 - i) + suit.getSuit(0) + "_";
 				}
 				if ((0x02 & suits) == 0x02) {
-					string += image.getImage(12 - i) + suit.getSuit(1);
+					string += image.getImage(12 - i) + suit.getSuit(1) + "_";
 				}
 				if ((0x04 & suits) == 0x04) {
-					string += image.getImage(12 - i) + suit.getSuit(2);
+					string += image.getImage(12 - i) + suit.getSuit(2) + "_";
 				}
 				if ((0x08 & suits) == 0x08) {
-					string += image.getImage(12 - i) + suit.getSuit(3);
+					string += image.getImage(12 - i) + suit.getSuit(3) + "_";
 				}
 			}
 			images >>= 4;
