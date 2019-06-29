@@ -9,6 +9,6 @@ public enum Suit {
 		else if (image == 2) return "\u2662";
 		else if (image == 3) return "\u2663";
 		
-		return "+";
+		return "x";
 	}
 }  

@@ -2,42 +2,26 @@ package calculator;
 
 import card.BoardsList;
 import card.Card;
+import player.Player;
 
-public class EquityCalculator {
+public class EquityCalculator extends Thread{
 	private static int playerEquity[];
 	private static long playerHaveCards[];
 	private static int playerBestCards[];
+	private static Player players[];
 
-	Defs defs = new Defs();
-	long timeStart = System.nanoTime();
 
-	public EquityCalculator(long boardCards, long... playerHands) {
-//		this.boardList = boardList;
-//		this.boardCards = boardCards;
-//		this.playerHands = playerHands;
-//		this.playerEquity = new int[playerHands.length];
-//		this.playerHaveCards = new long[playerHands.length];
-//		thi.splayerWinCards = new int[playerHands.length];
-	}
-
-	public static void main(String[] args) throws InterruptedException {
-		playerBestCards = new int[3]; // last index is ties
-		playerEquity = new int[3];
-		playerHaveCards = new long[2];
-		
-		for (int i = 0; i < 100; i++)
-			run();
+	public EquityCalculator(Player... players) {
+		this.playerEquity = new int[players.length];
+		this.playerHaveCards = new long[players.length];
+		this.players = players;
 		
 	}
 
-//	@Override
-	public static void run() {
-		Card card = new Card();
-		long player1 = card.getCardsAsLong("Ad6s") ;
-		long player2 = card.getCardsAsLong("Qc3h");
+	@Override public void run() {
 
 		BoardsList gen = new BoardsList();
-		gen.generateBourdsList(player1|player2);
+		gen.generateBourdsList(players);
 		
 		long playerHands[] = new long[2];
 		playerHands[0] = player1;
@@ -46,7 +30,7 @@ public class EquityCalculator {
 		long cardsOnTheBoard = 0;
 		
 		for (int i = 0; i < 10000; i++) { }
-		long timeStart = System.nanoTime();
+		
 		int size = 0;
 		
 		while (size != 1712304 ) {
@@ -71,16 +55,9 @@ public class EquityCalculator {
 		
 		long timeStop = System.nanoTime()  - timeStart;
 		System.out.printf("complett: %,d\n", timeStop);
-		System.out.println("\nsize:\t" + size);
-		System.out.println("player0\t" + (size - playerEquity[0] - playerEquity[1]));
-		System.out.println("player1\t" + playerEquity[0]);
-		System.out.println("player2\t" + playerEquity[1]);
-		System.out.println(100.0 * playerEquity[2] / size);
-		System.out.println(100.0 * (0.5 * playerEquity[2] + playerEquity[0]) / size);
-		System.out.println(100.0 * (0.5 * playerEquity[2] + playerEquity[1]) / size);
 	}
 
-	private static void checkFlush() {
+	private void checkFlush() {
 		long test = 0x01_1111_1111_1111L;
 
 		for (int player = 0; player < playerHaveCards.length; player++) {
@@ -91,14 +68,12 @@ public class EquityCalculator {
 				continue;
 			}
 
-/*			
-			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
-					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
-					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
-					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
-				continue;
-			}
-*/
+//			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
+//					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
+//					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
+//					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
+//				continue;
+//			}
 
 			boolean flushFound = false;
 
@@ -117,7 +92,7 @@ public class EquityCalculator {
 		}
 	}
 
-	private static boolean setFlushIfFound(int player, long currentSuit) {
+	private boolean setFlushIfFound(int player, long currentSuit) {
 		int flag = 0;
 		int playingCombination = 0;
 
@@ -134,7 +109,7 @@ public class EquityCalculator {
 		return false;
 	}
 
-	private static void checkStraight() {
+	private void checkStraight() {
 		int highCard = 0, step = 0;
 		long plhand = 0;
 
@@ -208,7 +183,7 @@ public class EquityCalculator {
 		}
 	}
 
-	private static void checkCombos() {
+	private void checkCombos() {
 		int pairHit = 0, threeHit = 0, noCombo = 0;
 		int cardsWithoutHit = 0;
 		int bestCombo = 0;
@@ -233,7 +208,7 @@ public class EquityCalculator {
 				if (currentImage == 0) {
 					continue;
 				} 
-				// four  + + + + + + + + + + + + + + + + + + +
+				// four 
 				else if (currentImage == 0b1111) {
 					playerBestCards[player] = 0x6000_0000; // set four
 					playerBestCards[player] |= (13 - image) << 4; // set four image 

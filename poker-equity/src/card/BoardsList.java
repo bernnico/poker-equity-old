@@ -1,44 +1,46 @@
 package card;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import player.Player;
 
 public class BoardsList {
 	
-	/* ====================TESTS ========================== */
+	/* ========================= TESTS ========================== */
 	private long timeStart;
-	/* =====================================================*/
+	/* ========================================================== */
 	
-	private long list2[];
+	private long list[];
+	private long cardsInGame;
 	
 	public BoardsList() {
 		timeStart = System.nanoTime();
 		
-		list2 = new long[1712304];
+		list = new long[1712304];
 	}
 		
-	public void run(long cardsInGame) {
-		Card card = new Card();
+	private void run() {
+		timeStart = System.nanoTime();
 			
-		long card5 = card.getCardsAsLong(Image._2, Suit.s);
-		long card4 = card.getCardsAsLong(Image._2, Suit.h);
-		long card3 = card.getCardsAsLong(Image._2, Suit.d);
-		long card2 = card.getCardsAsLong(Image._2, Suit.c);
-		long card1 = card.getCardsAsLong(Image._3, Suit.s);
+		long card5 = 0x01L; //Card.getCardsAsLong(Image._2, Suit.s);
+		long card4 = 0x02L; //Card.getCardsAsLong(Image._2, Suit.h);
+		long card3 = 0x04L; //Card.getCardsAsLong(Image._2, Suit.d);
+		long card2 = 0x08L; //Card.getCardsAsLong(Image._2, Suit.c);
+		long card1 = 0x10L; //Card.getCardsAsLong(Image._3, Suit.s);
+		
 		long board = card1|card2|card3|card4|card5;
 		
-		int size = 0;
-		if ((cardsInGame & board) == 0) {
-			list2[size++] = board;
-		}
+		long lastCard5 = 0x00_8000_0000_0000L; //Card.getCardsAsLong(Image._K, Suit.c);
+		long lastCard4 = 0x01_0000_0000_0000L; //Card.getCardsAsLong(Image._A, Suit.s);
+		long lastCard3 = 0x02_0000_0000_0000L; //Card.getCardsAsLong(Image._A, Suit.h);
+		long lastCard2 = 0x04_0000_0000_0000L; //Card.getCardsAsLong(Image._A, Suit.d);
+		long lastCard1 = 0x08_0000_0000_0000L; //Card.getCardsAsLong(Image._A, Suit.c);
 		
-		long lastBoard;
-		long lastCard5 = card.getCardsAsLong(Image._K, Suit.c);
-		long lastCard4 = card.getCardsAsLong(Image._A, Suit.s);
-		long lastCard3 = card.getCardsAsLong(Image._A, Suit.h);
-		long lastCard2 = card.getCardsAsLong(Image._A, Suit.d);
-		long lastCard1 = card.getCardsAsLong(Image._A, Suit.c);
-		lastBoard = lastCard1|lastCard2|lastCard3|lastCard4|lastCard5;
+		long lastBoard = lastCard1|lastCard2|lastCard3|lastCard4|lastCard5;
+		
+		int size = 0;
+		
+		if ((cardsInGame & board) == 0) {
+			list[size++] = board;
+		}
 	
 		while (board != lastBoard) {
 			if (card1 != lastCard1) {
@@ -73,27 +75,33 @@ public class BoardsList {
 			board = card1|card2|card3|card4|card5;
 			
 			if ((cardsInGame & board) == 0) {
-				list2[size++] = board;
+				list[size++] = board;
 			}
 		}
 		long timeStop = System.nanoTime()  - timeStart;
 		System.out.printf("generator: %,d\n", timeStop);
 	}
 	
-	public void generateBourdsList(long cardsOnTheHands) {
-		this.run(cardsOnTheHands);
+	public void generateBourdsList(Player... players) {
+		setCardsInGame(players);
+		this.run();
 	}
 	
-	private void setCardsInGame(long ... cardsOnTheHands) {
+	private void setCardsInGame(Player... players) {
+		this.cardsInGame = 0;
+		
+		for (int i = 0; i < players.length; i++) {
+			cardsInGame |= players[i].getHand();
+		}
 	}
 	
 	public long getNext(int i) {
-		return list2[i];
+		
+		return list[i];
 	}
 	
-
-	
 }
+
 
 
 

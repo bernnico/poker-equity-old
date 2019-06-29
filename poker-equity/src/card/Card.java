@@ -4,17 +4,23 @@ public class Card {
 	private Image image;
 	private Suit suit;
 
-	public Card() {
-		image = Image._2;
-		suit = Suit.s;
+	
+	
+	public Card(Image image, Suit suit) {
+		this.image = image;
+		this.suit = suit;
+	}
+	
+	public long getCardsAsLong() {
+		return getCardsAsLong(this.image, this.suit);
 	}
 
-	public long getCardsAsLong(Image image, Suit suit) {
+	static public long getCardsAsLong(Image image, Suit suit) {
 		long card = (1L << (image.ordinal() << 2)) << suit.ordinal();
 		return card;
 	}
 	
-	public long getCardsAsLong(String st) {
+	static public long getCardsAsLong(String st) {
 		long card = 0;
 		int im, su;
 		
@@ -157,6 +163,7 @@ public class Card {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
 
 
