@@ -1,7 +1,5 @@
 package calculator;
 
-import card.BoardsList;
-import card.Card;
 import player.Player;
 
 public class EquityCalculator extends Thread {
@@ -66,34 +64,29 @@ public class EquityCalculator extends Thread {
 	}
 
 	private void checkFlush() {
-		long test = 0x01_1111_1111_1111L;
 
 		for (int player = 0; player < playerHaveCards.length; player++) {
-			if ((playerHaveCards[player] & test) != 0 && (playerHaveCards[player] & test << 1) != 0
-					&& (playerHaveCards[player] & test << 2) != 0 && (playerHaveCards[player] & test << 3) != 0) {
+
+			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
+					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
+					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
+					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
 				continue;
 			}
 
-//			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
-//					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
-//					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
-//					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
-//				continue;
-//			}
-
 			boolean flushFound = false;
 
-			if ((playerHaveCards[player] & test) != 0) {
-				flushFound = setFlushIfFound(player, 0x01L << (12 << 2)); // Ah
+			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0) {
+				flushFound = setFlushIfFound(player, 0x01_0000_0000_0000L); // Ah
 			}
-			if (!flushFound && (playerHaveCards[player] & test << 1) != 0) {
-				flushFound = setFlushIfFound(player, 0x02L << (12 << 2)); // Ak
+			if (!flushFound && (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0) {
+				flushFound = setFlushIfFound(player, 0x02_0000_0000_0000L); // Ak
 			}
-			if (!flushFound && (playerHaveCards[player] & test << 2) != 0) {
-				flushFound = setFlushIfFound(player, 0x04L << (12 << 2)); // As
+			if (!flushFound && (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0) {
+				flushFound = setFlushIfFound(player, 0x04_0000_0000_0000L); // As
 			}
-			if (!flushFound && (playerHaveCards[player] & test << 3) != 0) {
-				setFlushIfFound(player, 0x08L << (12 << 2)); // Ac
+			if (!flushFound && (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
+				setFlushIfFound(player, 0x08_0000_0000_0000L); // Ac
 			}
 		}
 	}
@@ -222,30 +215,17 @@ public class EquityCalculator extends Thread {
 					long playerHaveCardsWithout4 = playerHaveCards[player] & ~(0x0F_0000_0000_0000L >> (image << 2));
 					playerBestCards[player] |= (playerHaveCardsWithout4 & (0x0F_0000_0000_0000L)) != 0 ? 13
 							: (playerHaveCardsWithout4 & (0x00_F000_0000_0000L)) != 0 ? 12
-									: (playerHaveCardsWithout4 & (0x00_0F00_0000_0000L)) != 0 ? 11
-											: (playerHaveCardsWithout4 & (0x00_00F0_0000_0000L)) != 0 ? 10
-													: (playerHaveCardsWithout4 & (0x00_000F_0000_0000L)) != 0 ? 9
-															: (playerHaveCardsWithout4 & (0x00_0000_F000_0000L)) != 0
-																	? 8
-																	: (playerHaveCardsWithout4
-																			& (0x00_0000_0F00_0000L)) != 0
-																					? 7
-																					: (playerHaveCardsWithout4
-																							& (0x00_0000_00F0_0000L)) != 0
-																									? 6
-																									: (playerHaveCardsWithout4
-																											& (0x00_0000_000F_0000L)) != 0
-																													? 5
-																													: (playerHaveCardsWithout4
-																															& (0x00_0000_0000_F000L)) != 0
-																																	? 4
-																																	: (playerHaveCardsWithout4
-																																			& (0x00_0000_0000_0F00L)) != 0
-																																					? 3
-																																					: (playerHaveCardsWithout4
-																																							& (0x00_0000_0000_00F0L)) != 0
-																																									? 2
-																																									: 1;
+							: (playerHaveCardsWithout4 & (0x00_0F00_0000_0000L)) != 0 ? 11
+							: (playerHaveCardsWithout4 & (0x00_00F0_0000_0000L)) != 0 ? 10
+							: (playerHaveCardsWithout4 & (0x00_000F_0000_0000L)) != 0 ? 9
+							: (playerHaveCardsWithout4 & (0x00_0000_F000_0000L)) != 0 ? 8
+							: (playerHaveCardsWithout4 & (0x00_0000_0F00_0000L)) != 0 ? 7
+							: (playerHaveCardsWithout4 & (0x00_0000_00F0_0000L)) != 0 ? 6
+							: (playerHaveCardsWithout4 & (0x00_0000_000F_0000L)) != 0 ? 5
+							: (playerHaveCardsWithout4 & (0x00_0000_0000_F000L)) != 0 ? 4
+							: (playerHaveCardsWithout4 & (0x00_0000_0000_0F00L)) != 0 ? 3
+							: (playerHaveCardsWithout4 & (0x00_0000_0000_00F0L)) != 0 ? 2
+							: 1;
 					break;
 				}
 				// high cards
