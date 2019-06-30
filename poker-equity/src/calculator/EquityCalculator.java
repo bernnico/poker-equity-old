@@ -9,16 +9,19 @@ public class EquityCalculator extends Thread {
 	private long playerHaveCards[];
 	private int playerBestCards[];
 	private Player players[];
+	
+	private int index;
+	
+	private long generatedBoards[];
 
-	private BoardsList gen;
-
-	public EquityCalculator(Player... players) {
+	public EquityCalculator(Player players[], long generatedBoards[], int index) {
 		this.playerEquity = new int[players.length + 1];
 		this.playerHaveCards = new long[players.length];
 		this.playerBestCards = new int[players.length];
+		
 		this.players = players;
-
-		gen = new BoardsList();
+		this.generatedBoards = generatedBoards;
+		this.index = index;
 
 	}
 
@@ -31,14 +34,13 @@ public class EquityCalculator extends Thread {
 			playerHands[i] = players[i].getHandAsLong();
 		}
 
-		for (int i = 0; i < 10000; i++) {
-		}
 
 		long cardsOnTheBoard = 0;
-		int size = 0;
+		int size = index;
 
-		while (size != 1712304) {
-			cardsOnTheBoard = gen.getNext(size++);
+		while (size < 1712304) {
+			cardsOnTheBoard = generatedBoards[size];
+			size += 4;
 
 			playerHaveCards[0] = playerHands[0] | cardsOnTheBoard;
 			playerHaveCards[1] = playerHands[1] | cardsOnTheBoard;
@@ -350,10 +352,6 @@ public class EquityCalculator extends Thread {
 	}
 
 	public int[] getPlayerEquity() {
-		gen.generateBourdsList(players);
-
-		run();
-
 		return playerEquity;
 	}
 

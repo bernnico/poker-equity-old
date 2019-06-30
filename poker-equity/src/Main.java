@@ -20,17 +20,32 @@ public class Main {
 		
 
 		timeStart = System.nanoTime();
-		bg.generateBourdsList(players);
+		long list[] = bg.generateBourdsList(players);
 		timeStop = System.nanoTime();
 		System.out.printf("generator2: %,d\n", (timeStop - timeStart));
 
 		
-		EquityCalculator ec = new EquityCalculator(players);
+		EquityCalculator ec0 = new EquityCalculator(players, list, 0);
+		EquityCalculator ec1 = new EquityCalculator(players, list, 1);
+		EquityCalculator ec2 = new EquityCalculator(players, list, 2);
+		EquityCalculator ec3 = new EquityCalculator(players, list, 3);
+		ec0.start();
+		ec1.start();
+		ec2.start();
+		ec3.start();
+		ec0.join();
+		ec1.join();
+		ec2.join();
+		ec3.join();
 
-		int equity[] = ec.getPlayerEquity();
+		// new int[3]; //
+		int equity0[] = ec0.getPlayerEquity();
+		int equity1[] = ec1.getPlayerEquity();
+		int equity2[] = ec2.getPlayerEquity();
+		int equity3[] = ec3.getPlayerEquity();
 		
-		for (int i = 0; i < equity.length; i++) {
-			System.out.println(i + ":\t" + equity[i]);
+		for (int i = 0; i < equity0.length; i++) {
+			System.out.println(i + ":\t" + (equity0[i] + equity1[i] + equity2[i] + equity3[i]));
 		}
 		
 		

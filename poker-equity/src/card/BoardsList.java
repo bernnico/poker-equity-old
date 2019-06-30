@@ -82,9 +82,13 @@ public class BoardsList {
 		System.out.printf("generator: %,d\n", timeStop);
 	}
 	
-	public void generateBourdsList(Player... players) {
+	public long[] generateBourdsList(Player... players) {
+		list = new long[1712304];
+		
 		setCardsInGame(players);
 		this.run();
+		
+		return list;
 	}
 	
 	private void setCardsInGame(Player... players) {
@@ -96,7 +100,6 @@ public class BoardsList {
 	}
 	
 	public long getNext(int i) {
-		
 		return list[i];
 	}
 	
