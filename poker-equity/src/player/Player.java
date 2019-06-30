@@ -4,46 +4,52 @@ import card.Card;
 
 public class Player {
 	private String name;
-	private long hand;
+	private Card[] cards;
+//	private long hand;
+	
+	private int winCards;
+	private int equity;
 	
 //	private int sit;
 //	private int stack;
 //	private int turn;
 //	private Position position;
 	
-	
 	public Player(String name) {
 		this.name = name;
-//		this.hand = 0;
 	}
 	
-	public Player(String name, Card... card) {
+	public Player(String name, Card... cards) {
 		this.name = name;
-		this.hand = 0;
+		this.cards = cards;
 		
-		for (int i = 0; i < card.length; i++) {
-			hand |= card[i].getCardsAsLong();
-		}
+		setHand(cards);
 	}
 
 	public String getName() {
-		
 		return name;
 	}
 
 	public void setName(String name) {
-		
 		this.name = name;
 	}
 
-	public long getHand() {
-		
-		return hand;
+	public Card[] getHand() {
+		return cards;
 	}
 
-	public void setHand(long hand) {
+	public void setHand(Card... cards) {
+		this.cards = cards;
+	}
+	
+	public long getHandAsLong() {
+		long hand = 0;
 		
-		this.hand = hand;
+		for (int i = 0; i < cards.length; i++) {
+			hand |= cards[i].getCardsAsLong();
+		}
+		
+		return hand;
 	}
 	
 }

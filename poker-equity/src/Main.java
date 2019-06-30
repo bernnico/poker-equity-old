@@ -15,8 +15,8 @@ public class Main {
 		
 		
 		Player[] players = new Player[2];
-		players[0] = new Player("Roma", new Card(Image._2, Suit.c), new Card(Image._2, Suit.s));
-		players[1] = new Player("Wadim", new Card(Image._A, Suit.c), new Card(Image._A, Suit.s));
+		players[0] = new Player("Roma", new Card(Image._5, Suit.c), new Card(Image._6, Suit.s));
+		players[1] = new Player("Wadim", new Card(Image._9, Suit.c), new Card(Image._J, Suit.h));
 		
 
 		timeStart = System.nanoTime();
@@ -28,6 +28,10 @@ public class Main {
 		EquityCalculator ec = new EquityCalculator(players);
 
 		int equity[] = ec.getPlayerEquity();
+		
+		for (int i = 0; i < equity.length; i++) {
+			System.out.println(i + ":\t" + equity[i]);
+		}
 		
 		
 		
