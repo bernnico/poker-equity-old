@@ -2,7 +2,7 @@ package calculator;
 
 import player.Player;
 
-public class EquityCalculator extends Thread {
+public class RoundChecker extends Thread {
 	private int playerEquity[];
 	private long playerHaveCards[];
 	private int playerBestCards[];
@@ -12,7 +12,7 @@ public class EquityCalculator extends Thread {
 	
 	private long generatedBoards[];
 
-	public EquityCalculator(Player players[], long generatedBoards[], int index) {
+	public RoundChecker(Player players[], long generatedBoards[], int index) {
 		this.playerEquity = new int[players.length + 1];
 		this.playerHaveCards = new long[players.length];
 		this.playerBestCards = new int[players.length];
@@ -32,13 +32,12 @@ public class EquityCalculator extends Thread {
 			playerHands[i] = players[i].getHandAsLong();
 		}
 
-
 		long cardsOnTheBoard = 0;
 		int size = index;
 
 		while (size < 1712304) {
 			cardsOnTheBoard = generatedBoards[size];
-			size += 4;
+			size += 2;
 
 			playerHaveCards[0] = playerHands[0] | cardsOnTheBoard;
 			playerHaveCards[1] = playerHands[1] | cardsOnTheBoard;
@@ -55,7 +54,7 @@ public class EquityCalculator extends Thread {
 			} else if (playerBestCards[0] < playerBestCards[1]) {
 				playerEquity[1]++;
 			} else {
-				playerEquity[2]++;
+//				playerEquity[2]++;
 			}
 		}
 
@@ -119,7 +118,8 @@ public class EquityCalculator extends Thread {
 				step = image << 2;
 
 				// straight, highest first
-				if ((plhand & (0x0F_0000_0000_0000L >> step)) != 0 && (plhand & (0x00_F000_0000_0000L >> step)) != 0
+				if (       (plhand & (0x0F_0000_0000_0000L >> step)) != 0
+						&& (plhand & (0x00_F000_0000_0000L >> step)) != 0
 						&& (plhand & (0x00_0F00_0000_0000L >> step)) != 0
 						&& (plhand & (0x00_00F0_0000_0000L >> step)) != 0
 						&& (plhand & (0x00_000F_0000_0000L >> step)) != 0) {
