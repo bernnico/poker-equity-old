@@ -19,11 +19,22 @@ public class Equity {
 	}
 	
 	
-	public int[] getEquity() {
+	public int[] getEquity() throws InterruptedException {
 		long list[] = bg.generateBourdsList(players);
 		
-		for (int i = 0; i < 10; i++) {
-			roundCheckerThreads[i] = new RoundChecker(players, list, 0);
+		for (int i = 0; i < roundCheckerThreads.length; i++) {
+			roundCheckerThreads[i] = new RoundChecker(players, list, i);
+			roundCheckerThreads[i].start();
+		}
+		
+		for (int i = 0; i < roundCheckerThreads.length; i++) {
+			roundCheckerThreads[i].join();
+		}
+		
+		int equity[] = new int[players.length + 1];
+		
+		for (int i = 0; i < roundCheckerThreads.length; i++) {
+			equity = roundCheckerThreads[i].getPlayerEquity();
 		}
 		
 		
