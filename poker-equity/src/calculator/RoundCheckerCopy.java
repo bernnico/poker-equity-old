@@ -2,7 +2,7 @@ package calculator;
 
 import player.Player;
 
-public class RoundChecker extends Thread {
+public class RoundCheckerCopy extends Thread {
 	private static int cores = 1;
 	
 	private int playerEquity[];
@@ -14,7 +14,7 @@ public class RoundChecker extends Thread {
 	
 	private long generatedBoards[];
 
-	public RoundChecker(Player players[], long generatedBoards[], int index) {
+	public RoundCheckerCopy(Player players[], long generatedBoards[], int index) {
 		this.playerEquity = new int[players.length + 1];
 		this.playerHaveCards = new long[players.length];
 		this.playerBestCards = new int[players.length];
@@ -230,13 +230,7 @@ public class RoundChecker extends Thread {
 							: (playerHaveCardsWithout4 & (0x00_0000_0000_00F0L)) != 0 ? 2
 							: 1;
 					break;
-				}
-				
-				// fullhouse is not possible
-//				else if ((playerBestCards[player] & 0xF000_0000) != 0) {
-//					continue;
-//				}
-				
+				}				
 				// high cards
 				else if (currentImage == 0b001 || currentImage == 0b0010 || currentImage == 0b0100
 						|| currentImage == 0b1000) {
@@ -336,34 +330,11 @@ public class RoundChecker extends Thread {
 	}
 
 	public static void setCores(int cores) {
-		RoundChecker.cores = cores;
+		RoundCheckerCopy.cores = cores;
 	}
 
 	public int[] getPlayerEquity() {
 		return playerEquity;
-	}
-	
-	public void isStraightPossible() {
-		// A K Q J T 9 8 7 6 5 4 3 2
-		
-		int isStraightPossible = 0;
-		int straight = 0;
-		
-		for (int i = 0; i < 9; i++) {
-			if ((playerHaveCards[0] & (0x0F_0000_0000_0000L >> (i << 2))) != 0) {
-				isStraightPossible++;
-				straight++;
-			} else {
-				if (isStraightPossible > 2) {
-					break;
-				}
-				straight = 0;
-			}
-			
-			if (straight == 5) {
-				
-			} 
-		}
 	}
 
 }
