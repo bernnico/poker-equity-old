@@ -4,41 +4,39 @@ import card.BoardsList;
 import player.Player;
 
 public class Equity {
-	private int cores;
-	private RoundChecker roundCheckerThreads[];
-	private Player players[];
+	private RoundChecker threads[];
+	
 	private BoardsList bg = new BoardsList();
 	
-	
-	
-	public Equity(Player players[]) {
-		this.cores = Runtime.getRuntime().availableProcessors();
-		this.roundCheckerThreads = new RoundChecker[cores / 2];
-		this.players = players;
-		
+	public Equity() {
+		int cores = Runtime.getRuntime().availableProcessors() / 2;
+		this.threads = new RoundChecker[cores];
+		RoundChecker.setCores(cores);
 	}
 	
-	
-	public int[] getEquity() throws InterruptedException {
+	public int[] getEquity(Player players[]) throws InterruptedException {
 		long list[] = bg.generateBourdsList(players);
 		
-		for (int i = 0; i < roundCheckerThreads.length; i++) {
-			roundCheckerThreads[i] = new RoundChecker(players, list, i);
-			roundCheckerThreads[i].start();
+		for (int i = 0; i < threads.length; i++) {
+			threads[i] = new RoundChecker(players, list, i);
+			threads[i].start();
 		}
 		
-		for (int i = 0; i < roundCheckerThreads.length; i++) {
-			roundCheckerThreads[i].join();
+		for (int i = 0; i < threads.length; i++) {
+			threads[i].join();
 		}
 		
 		int equity[] = new int[players.length + 1];
+		int eq[];
 		
-		for (int i = 0; i < roundCheckerThreads.length; i++) {
-			equity = roundCheckerThreads[i].getPlayerEquity();
+		for (int i = 0; i < threads.length; i++) {
+			eq = threads[i].getPlayerEquity();
+			
+			for (int j = 0; j < eq.length; j++) {
+				equity[j] += eq[j];
+			}
 		}
-		
-		
-		return null;
+		return equity;
 	}
 
 }

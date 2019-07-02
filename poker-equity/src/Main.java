@@ -1,3 +1,4 @@
+import calculator.Equity;
 import calculator.RoundChecker;
 import card.BoardsList;
 import card.Card;
@@ -18,13 +19,19 @@ public class Main {
 		players[0] = new Player("Wadim", new Card(Image._9, Suit.c), new Card(Image._J, Suit.h));
 		players[1] = new Player("Roma", new Card(Image._5, Suit.c), new Card(Image._6, Suit.s));
 		
+		Equity eq = new Equity();
+		for (int i = 0; i < 10; i++) {
+			int e[]  = eq.getEquity(players);
+			for (int j = 0; j < 3; j++) {
+				System.out.println(j + ":   " + e[j]);
+			}
+		}
 
 		timeStart = System.nanoTime();
 		long list[] = bg.generateBourdsList(players);
 		timeStop = System.nanoTime();
 		System.out.printf("generator2: %,d\n", (timeStop - timeStart));
 
-		
 		RoundChecker ec0;
 		RoundChecker ec1;
 //		EquityCalculator ec2;
@@ -32,8 +39,7 @@ public class Main {
 //		EquityCalculator ec4;
 //		EquityCalculator ec5;
 		
-		
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 0; i++) {
 			ec0 = new RoundChecker(players, list, 0);
 			ec1 = new RoundChecker(players, list, 1);
 //			ec2 = new EquityCalculator(players, list, 2);
@@ -68,7 +74,6 @@ public class Main {
 						(equity0[j] + equity1[j] + equity2[j] + equity3[j] + equity4[j] + equity5[j]));
 			}
 		}
-		
 		System.out.println(Runtime.getRuntime().availableProcessors());
 		
 		

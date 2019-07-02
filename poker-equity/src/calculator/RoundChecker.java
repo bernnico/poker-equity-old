@@ -3,6 +3,8 @@ package calculator;
 import player.Player;
 
 public class RoundChecker extends Thread {
+	private static int cores = 1;
+	
 	private int playerEquity[];
 	private long playerHaveCards[];
 	private int playerBestCards[];
@@ -37,7 +39,7 @@ public class RoundChecker extends Thread {
 
 		while (size < 1712304) {
 			cardsOnTheBoard = generatedBoards[size];
-			size += 2;
+			size += cores;
 
 			playerHaveCards[0] = playerHands[0] | cardsOnTheBoard;
 			playerHaveCards[1] = playerHands[1] | cardsOnTheBoard;
@@ -54,7 +56,7 @@ public class RoundChecker extends Thread {
 			} else if (playerBestCards[0] < playerBestCards[1]) {
 				playerEquity[1]++;
 			} else {
-//				playerEquity[2]++;
+				playerEquity[2]++;
 			}
 		}
 
@@ -329,6 +331,14 @@ public class RoundChecker extends Thread {
 				}
 			}
 		}
+	}
+	
+	public static int getCores() {
+		return cores;
+	}
+
+	public static void setCores(int cores) {
+		RoundChecker.cores = cores;
 	}
 
 	public int[] getPlayerEquity() {
