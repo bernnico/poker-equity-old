@@ -6,8 +6,8 @@ public class Player {
 	private String name;
 	private Card[] cards;
 //	private long hand;
+//	private int winCards;
 	
-	private int winCards;
 	private int equity;
 	
 //	private int sit;
@@ -48,8 +48,15 @@ public class Player {
 		for (int i = 0; i < cards.length; i++) {
 			hand |= cards[i].getCardsAsLong();
 		}
-		
 		return hand;
+	}
+	
+	public int getEquity() {
+		return equity;
+	}
+
+	public void setEquity(int equity) {
+		this.equity = equity;
 	}
 	
 }

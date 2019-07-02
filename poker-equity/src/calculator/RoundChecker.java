@@ -215,7 +215,8 @@ public class RoundChecker extends Thread {
 
 					// set fifth card
 					long playerHaveCardsWithout4 = playerHaveCards[player] & ~(0x0F_0000_0000_0000L >> (image << 2));
-					playerBestCards[player] |= (playerHaveCardsWithout4 & (0x0F_0000_0000_0000L)) != 0 ? 13
+					playerBestCards[player] |=
+							  (playerHaveCardsWithout4 & (0x0F_0000_0000_0000L)) != 0 ? 13
 							: (playerHaveCardsWithout4 & (0x00_F000_0000_0000L)) != 0 ? 12
 							: (playerHaveCardsWithout4 & (0x00_0F00_0000_0000L)) != 0 ? 11
 							: (playerHaveCardsWithout4 & (0x00_00F0_0000_0000L)) != 0 ? 10
@@ -264,12 +265,7 @@ public class RoundChecker extends Thread {
 					}
 				}
 				// three
-				else
-				/*
-				 * if (currentImage == 0b0111 || currentImage == 0b1011 || currentImage ==
-				 * 0b1101 || currentImage == 0b1110)
-				 */
-				{
+				else {
 
 					if (pairHit != 0) {
 						// set fullhouse
@@ -331,10 +327,6 @@ public class RoundChecker extends Thread {
 				}
 			}
 		}
-	}
-	
-	public static int getCores() {
-		return cores;
 	}
 
 	public static void setCores(int cores) {

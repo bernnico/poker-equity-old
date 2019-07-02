@@ -36,6 +36,11 @@ public class Equity {
 				equity[j] += eq[j];
 			}
 		}
+		
+		for (int i = 0; i < players.length; i++) {
+			players[i].setEquity(equity[i]);
+		}
+		
 		return equity;
 	}
 

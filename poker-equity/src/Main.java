@@ -26,6 +26,10 @@ public class Main {
 				System.out.println(j + ":   " + e[j]);
 			}
 		}
+		
+		for (int j = 0; j < players.length; j++) {
+			System.out.println(j + ":   " + players[j].getEquity());
+		}
 
 		timeStart = System.nanoTime();
 		long list[] = bg.generateBourdsList(players);
