@@ -336,6 +336,32 @@ public class RoundCheckerCopy extends Thread {
 	public int[] getPlayerEquity() {
 		return playerEquity;
 	}
+	
+	public boolean isStraightPossible(int player) {
+		// A K Q J T 9 8 7 6 5 4 3 2
+		int isStraightPossible = 0;
+		int straight = 0;
+	
+		for (int image = 0; image < 13; image++) {
+			if ((playerHaveCards[player] & (0x0F_0000_0000_0000L >> (image << 2))) != 0) {
+				isStraightPossible++;
+				straight++;
+			}
+			else {
+				if (isStraightPossible > 3) {
+					return false;
+				}
+				straight = 0;
+			}
+			if (straight == 5) {
+				return true;
+			} 
+		}
+		if (straight == 4 && (playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) {
+			return true;
+		} 
+		return false;
+	}
 
 }
 
