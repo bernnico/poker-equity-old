@@ -22,7 +22,6 @@ public class RoundChecker extends Thread {
 		this.players = players;
 		this.generatedBoards = generatedBoards;
 		this.index = index;
-
 	}
 
 	@Override
@@ -53,9 +52,11 @@ public class RoundChecker extends Thread {
 
 			if (playerBestCards[0] > playerBestCards[1]) {
 				playerEquity[0]++;
-			} else if (playerBestCards[0] < playerBestCards[1]) {
+			} 
+			else if (playerBestCards[0] < playerBestCards[1]) {
 				playerEquity[1]++;
-			} else {
+			} 
+			else {
 				playerEquity[2]++;
 			}
 		}
@@ -65,10 +66,9 @@ public class RoundChecker extends Thread {
 	}
 
 	private void checkFlush() {
-
 		for (int player = 0; player < playerHaveCards.length; player++) {
-
-			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
+			// is flush possible
+			if (       (playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
 					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
 					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
 					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
@@ -76,33 +76,36 @@ public class RoundChecker extends Thread {
 			}
 
 			boolean flushFound = false;
-
+			// As
 			if ((playerHaveCards[player] & 0x01_1111_1111_1111L) != 0) {
-				flushFound = setFlushIfFound(player, 0x01_0000_0000_0000L); // Ah
+				flushFound = setFlushIfFound(player, 0x01_0000_0000_0000L);
 			}
+			// Ah
 			if (!flushFound && (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0) {
-				flushFound = setFlushIfFound(player, 0x02_0000_0000_0000L); // Ak
+				flushFound = setFlushIfFound(player, 0x02_0000_0000_0000L);
 			}
+			// Ad
 			if (!flushFound && (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0) {
-				flushFound = setFlushIfFound(player, 0x04_0000_0000_0000L); // As
+				flushFound = setFlushIfFound(player, 0x04_0000_0000_0000L);
 			}
+			// Ac
 			if (!flushFound && (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0) {
-				setFlushIfFound(player, 0x08_0000_0000_0000L); // Ac
+				setFlushIfFound(player, 0x08_0000_0000_0000L);
 			}
 		}
 	}
 
 	private boolean setFlushIfFound(int player, long currentSuit) {
-		int flag = 0;
+		int flagFlush = 0;
 		int playingCombination = 0;
 
 		for (int image = 0; image < 13; image++) {
 			if ((playerHaveCards[player] & (currentSuit >> (image << 2))) != 0) {
-				flag++;
+				flagFlush++;
 				playingCombination |= 0x00_1000 >> image;
 			}
 		}
-		if (flag > 4) {
+		if (flagFlush > 4) {
 			playerBestCards[player] = 0x4000_0000 | playingCombination;
 			return true;
 		}
@@ -114,6 +117,24 @@ public class RoundChecker extends Thread {
 		long plhand = 0;
 
 		for (int player = 0; player < playerHaveCards.length; player++) {
+			
+			if(!isStraightPossible(player)) {
+				// flush correction
+				if ((playerBestCards[player] & 0x4000_0000) == 0x4000_0000) {
+					int j = 0;
+					for (int i = 0; i < 13; i++) {
+						if ((playerBestCards[player] & (1 << (12 - i))) != 0) {
+							if (j == 5) {
+								playerBestCards[player] &= ~(0x00_1FFF >> i);
+								break; // image
+							}
+							j++;
+						}
+					}
+				}
+				continue; // player
+			}
+			
 			plhand = playerHaveCards[player];
 
 			for (int image = 0; image < 9; image++) {
@@ -190,8 +211,10 @@ public class RoundChecker extends Thread {
 		int currentImage = 0;
 
 		for (int player = 0; player < playerHaveCards.length; player++) {
-			// straight flush
-			if ((playerBestCards[player] & 0xF000_0000) == 0x7000_0000) {
+			// straight or flush -> four or fullhouse not possible
+			if (
+//					(playerBestCards[player] & 0xF000_0000) == 0x7000_0000 
+					(playerBestCards[player] & 0xF000_0000) != 0) {
 				continue;
 			}
 
@@ -231,12 +254,6 @@ public class RoundChecker extends Thread {
 							: 1;
 					break;
 				}
-				
-				// fullhouse is not possible
-//				else if ((playerBestCards[player] & 0xF000_0000) != 0) {
-//					continue;
-//				}
-				
 				// high cards
 				else if (currentImage == 0b001 || currentImage == 0b0010 || currentImage == 0b0100
 						|| currentImage == 0b1000) {
@@ -343,27 +360,30 @@ public class RoundChecker extends Thread {
 		return playerEquity;
 	}
 	
-	public void isStraightPossible() {
+	public boolean isStraightPossible(int player) {
 		// A K Q J T 9 8 7 6 5 4 3 2
-		
 		int isStraightPossible = 0;
 		int straight = 0;
-		
-		for (int i = 0; i < 9; i++) {
-			if ((playerHaveCards[0] & (0x0F_0000_0000_0000L >> (i << 2))) != 0) {
+	
+		for (int image = 0; image < 13; image++) {
+			if ((playerHaveCards[player] & (0x0F_0000_0000_0000L >> (image << 2))) != 0) {
 				isStraightPossible++;
 				straight++;
-			} else {
-				if (isStraightPossible > 2) {
-					break;
+			}
+			else {
+				if (isStraightPossible > 3) {
+					return false;
 				}
 				straight = 0;
 			}
-			
 			if (straight == 5) {
-				
+				return true;
 			} 
 		}
+		if (straight == 4 && (playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) {
+			return true;
+		} 
+		return false;
 	}
 
 }
