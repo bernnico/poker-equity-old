@@ -266,7 +266,6 @@ public class RoundCheckerCopy extends Thread {
 				}
 				// three
 				else {
-
 					if (pairHit != 0) {
 						// set fullhouse
 						bestCombo |= (13 - image) << 24;

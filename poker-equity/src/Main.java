@@ -8,10 +8,56 @@ import player.Player;
 
 public class Main {
 	
-	static long timeStart = System.nanoTime();
-	static long timeStop = System.nanoTime();
+	static long timeStart;// = System.nanoTime();
+	static long timeStop;// = System.nanoTime();
 
 	public static void main(String[] args) throws InterruptedException {
+		
+		for (int j = 0; j < 100;j++) {
+			short testByte = (byte)System.nanoTime(), testByte2 = 0;
+			short testShort = (short)System.nanoTime(), testShort2 = 0;
+			int testInt = (int)System.nanoTime(), testInt2 = 0;
+			long testLong = System.nanoTime(), testLong2 = 0;
+			long timeStop = 0;
+			
+			long timeStart = System.nanoTime();
+			for (int i = 0; i < 1_000_000_000; i++) {
+				if (testByte == (testByte2 + (byte)j));
+				testByte2++;
+			}
+			timeStop = System.nanoTime();
+			System.out.printf("byte:\t%,d\n", (timeStop -timeStart));
+			
+			timeStart = System.nanoTime();
+			for (int i = 0; i < 1_000_000_000; i++) {
+				if (testShort == (testShort2 + (short)j));
+				testShort2++;
+			}
+			timeStop = System.nanoTime();
+			System.out.printf("short:\t%,d\n", (timeStop -timeStart));
+			
+			timeStart = System.nanoTime();
+			for (int i = 0; i < 1_000_000_000; i++) {
+				if (testInt == (testInt2 + (int)j));
+				testInt2++;
+			}
+			timeStop = System.nanoTime();
+			System.out.printf("int:\t%,d\n", (timeStop -timeStart));
+			
+			timeStart = System.nanoTime();
+			for (int i = 0; i < 1_000_000_000; i++) {
+				if (testLong == (testLong2 + (long)j));
+				testLong2++;
+			}
+			timeStop = System.nanoTime();
+			System.out.printf("long:\t%,d\n", (timeStop -timeStart));
+			
+			System.out.println();
+		}
+		
+		
+		
+		
 		BoardsList bg = new BoardsList();
 		
 		Player[] players = new Player[2];
@@ -19,7 +65,7 @@ public class Main {
 		players[1] = new Player("Roma", new Card(Image._5, Suit.c), new Card(Image._6, Suit.s));
 		
 		Equity eq = new Equity();
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 0; i++) {
 			int e[]  = eq.getEquity(players);
 			for (int j = 0; j < 3; j++) {
 				System.out.println(j + ":   " + e[j]);
