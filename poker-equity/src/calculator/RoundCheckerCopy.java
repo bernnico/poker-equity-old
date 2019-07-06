@@ -362,6 +362,123 @@ public class RoundCheckerCopy extends Thread {
 		} 
 		return false;
 	}
+	
+	public void isFlushOrStraightPossible() {
+		// A K Q J T 9 8 7 6 5 4 3 2
+		
+		int cards = 0;
+		
+		int flushHits = 0;
+		int flushCombination = 0;
+		int flushCombinationAll = 0;
+		
+		int straightHits = 0;
+		int straightCombination = 0;
+	
+		for (int player = 0; player < players.length; player++) {
+			// is flush possible
+			if (    !( (playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
+					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
+					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
+					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0)) {
+				
+				cards = 0;
+				flushHits = 0;
+				flushCombination = 0;
+				flushCombinationAll = 0;
+				
+				for (int suit = 0; suit < 4; suit++) {
+					if ((playerHaveCards[player] & (0x01_1111_1111_1111L << suit)) == 0) {
+						continue;
+					}
+					for (int image = 0; image < 13; image++) {	
+						if ((playerHaveCards[player] 
+								& ((0x01_0000_0000_0000L << suit) >> (image << 2))) != 0) {
+							
+							cards++;
+							flushHits++;
+							flushCombinationAll |= 0x00_1000 >> image;
+							if (flushHits == 5) {
+								flushCombination = flushCombinationAll;
+							}
+						}
+					} /*   for image end   */
+					
+					if (flushHits < 5) {
+						flushHits = 0;
+						flushCombination = 0;
+						flushCombinationAll = 0;
+						if (cards > 2) {
+							break;
+						}
+					} else {
+						break;
+					}
+				} /*   for suit end   */
+			}
+			
+			cards = 0;
+			straightHits = 0;
+			straightCombination = 0;
+			
+			// check straight
+			for (int image = 0; image < 13; image++) {	
+
+				if ((playerHaveCards[player] & (0x0F_0000_0000_0000L >> (image << 2))) != 0) {
+					cards++;
+					straightHits++;
+					
+					if (straightHits < 5) {
+						straightCombination |= 1 << (12 - image);
+					} else if (straightHits == 5) {
+						break;
+					}
+					else {
+						if (flushCombinationAll == 0) {
+							break;
+						} else {
+							if ((flushCombinationAll & straightCombination) == straightCombination) {
+								break;
+							}
+							// TODO
+//							straightCombination >>= straightCombination;
+						}
+					}
+				}
+				else {
+					straightHits = 0;
+					straightCombination = 0;
+					
+					if (cards > 3) {
+						break;
+					}
+				}
+			} /* for image end */
+			
+			// check straight 5_4_3_2_A
+			if (straightHits == 4 && (playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) {
+				straightCombination = 0x0000_000F;
+			} else if (straightHits < 5) {
+				straightCombination = 0;
+			}
+			
+			
+			// check straight flush
+			if (straightCombination != 0
+					&& (flushCombinationAll & straightCombination) == straightCombination) {
+				playerBestCards[player] = 0x7000_0000 | straightCombination;
+				// TODO
+			}
+			// check flush
+			else if (flushCombination != 0) {
+				playerBestCards[player] = 0x4000_0000 | flushCombination;
+			}
+			// check straight
+			else if (straightCombination != 0) {
+				playerBestCards[player] = 0x3000_0000 | straightCombination;
+			}
+		}
+	}
 
 }
 

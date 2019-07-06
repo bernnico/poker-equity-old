@@ -14,13 +14,12 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		BoardsList bg = new BoardsList();
 		
-		
 		Player[] players = new Player[2];
 		players[0] = new Player("Wadim", new Card(Image._9, Suit.c), new Card(Image._J, Suit.h));
 		players[1] = new Player("Roma", new Card(Image._5, Suit.c), new Card(Image._6, Suit.s));
 		
 		Equity eq = new Equity();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 20; i++) {
 			int e[]  = eq.getEquity(players);
 			for (int j = 0; j < 3; j++) {
 				System.out.println(j + ":   " + e[j]);

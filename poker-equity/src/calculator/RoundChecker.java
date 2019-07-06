@@ -1,5 +1,9 @@
 package calculator;
 
+import card.Card;
+import card.Image;
+import card.Suit;
+import debug.Debug;
 import player.Player;
 
 public class RoundChecker extends Thread {
@@ -37,7 +41,13 @@ public class RoundChecker extends Thread {
 		int size = index;
 
 		while (size < 1712304) {
+//			players[0] = new Player("Wadim", new Card(Image._9, Suit.c), new Card(Image._J, Suit.h));
+//			players[1] = new Player("Roma", new Card(Image._5, Suit.c), new Card(Image._6, Suit.s));
+//			cardsOnTheBoard = Card.getCardsAsLong("9hKcQsJcTd");
+//			size = 1712304;
+			
 			cardsOnTheBoard = generatedBoards[size];
+			
 			size += cores;
 
 			playerHaveCards[0] = playerHands[0] | cardsOnTheBoard;
@@ -46,10 +56,11 @@ public class RoundChecker extends Thread {
 			playerBestCards[0] = 0;
 			playerBestCards[1] = 0;
 
-//			checkFlush();
-//			checkStraight();
+			checkFlush();
+
+			checkStraight();
 			
-			isFlushOrStraightPossible();
+//			isFlushOrStraightPossible();
 			
 			checkCombos();
 
@@ -62,10 +73,13 @@ public class RoundChecker extends Thread {
 			else {
 				playerEquity[2]++;
 			}
+			
+//			Debug.addPlayerCards(playerBestCards[0]);
 		}
 
 		long timeStop = System.nanoTime() - timeStart;
 		System.out.printf("complett: %,d\n", timeStop);
+//		Debug.printAllHands(size);
 	}
 
 	private void checkFlush() {
@@ -389,115 +403,7 @@ public class RoundChecker extends Thread {
 		return false;
 	}
 	
-	public void isFlushOrStraightPossible() {
-		// A K Q J T 9 8 7 6 5 4 3 2
-		
-		int cards = 0;
-		
-		int flushHits = 0;
-		int flushCombination = 0;
-		int flushCombinationAll = 0;
-		
-		int straightHits = 0;
-		int straightCombination = 0;
-	
-		for (int player = 0; player < players.length; player++) {
-			
-			// is flush possible
-			if (    !( (playerHaveCards[player] & 0x01_1111_1111_1111L) != 0
-					&& (playerHaveCards[player] & 0x02_2222_2222_2222L) != 0
-					&& (playerHaveCards[player] & 0x04_4444_4444_4444L) != 0
-					&& (playerHaveCards[player] & 0x08_8888_8888_8888L) != 0)) {
-				
-				cards = 0;
-				flushHits = 0;
-				flushCombination = 0;
-				flushCombinationAll = 0;
-				
-				for (int suit = 0; suit < 4; suit++) {
-					if ((playerHaveCards[player] & (0x01_1111_1111_1111L << suit)) == 0) {
-						continue;
-					}
-					for (int image = 0; image < 13; image++) {	
-						if ((playerHaveCards[player] 
-								& ((0x01_0000_0000_0000L << suit) >> (image << 2))) != 0) {
-							
-							cards++;
-							flushHits++;
-							flushCombinationAll |= 0x00_1000 >> image;
-							if (flushHits == 5) {
-								flushCombination = flushCombinationAll;
-							}
-						}
-					} /*   for image end   */
-					
-					if (flushHits < 5) {
-						flushHits = 0;
-						flushCombination = 0;
-						flushCombinationAll = 0;
-						if (cards > 2) {
-							break;
-						}
-					} else {
-						break;
-					}
-				} /*   for suit end   */
-			}
-			
-			cards = 0;
-			straightHits = 0;
-			straightCombination = 0;
-			
-			// check straight
-			for (int image = 0; image < 13; image++) {		
 
-				if ((playerHaveCards[player] & (0x0F_0000_0000_0000L >> (image << 2))) != 0) {
-					cards++;
-					straightHits++;
-					
-					if (straightHits < 6) {
-						straightCombination |= 1 << (12 - image);
-					} else {
-						if (flushCombinationAll == 0) {
-							break;
-						} else {
-							if ((flushCombinationAll & straightCombination) == straightCombination) {
-								break;
-							}
-							// TODO
-							straightCombination >>= straightCombination;
-						}
-					}
-				}
-				else {
-					straightHits = 0;
-					
-					if (cards > 3) {
-						break;
-					}
-				}
-			} /* for image end */
-			
-			// check straight 5_4_3_2_A
-			if (straightHits == 4 && (playerHaveCards[player] & 0x0F_0000_0000_0000L) != 0) {
-				straightCombination = 0x0000_100F;
-			}
-			
-			
-			// check straight flush
-			if ((flushCombinationAll & straightCombination) == straightCombination) {
-				playerBestCards[player] = 0x7000_0000 | straightCombination;
-			}
-			// check flush
-			else if (flushCombination != 0) {
-				playerBestCards[player] = 0x4000_0000 | flushCombination;
-			}
-			// check straight
-			else if (straightCombination != 0) {
-				playerBestCards[player] = 0x3000_0000 | straightCombination;
-			}
-		}
-	}
 
 }
 
