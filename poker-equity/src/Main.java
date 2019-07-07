@@ -1,7 +1,9 @@
 import calculator.Equity;
 import calculator.RoundChecker;
 import card.BoardsList;
+import card.BoardsListInt;
 import card.Card;
+import card.CardShort;
 import card.Image;
 import card.Suit;
 import player.Player;
@@ -12,57 +14,20 @@ public class Main {
 	static long timeStop;// = System.nanoTime();
 
 	public static void main(String[] args) throws InterruptedException {
-		
-		for (int j = 0; j < 100;j++) {
-			short testByte = (byte)System.nanoTime(), testByte2 = 0;
-			short testShort = (short)System.nanoTime(), testShort2 = 0;
-			int testInt = (int)System.nanoTime(), testInt2 = 0;
-			long testLong = System.nanoTime(), testLong2 = 0;
-			long timeStop = 0;
-			
-			long timeStart = System.nanoTime();
-			for (int i = 0; i < 1_000_000_000; i++) {
-				if (testByte == (testByte2 + (byte)j));
-				testByte2++;
-			}
-			timeStop = System.nanoTime();
-			System.out.printf("byte:\t%,d\n", (timeStop -timeStart));
-			
-			timeStart = System.nanoTime();
-			for (int i = 0; i < 1_000_000_000; i++) {
-				if (testShort == (testShort2 + (short)j));
-				testShort2++;
-			}
-			timeStop = System.nanoTime();
-			System.out.printf("short:\t%,d\n", (timeStop -timeStart));
-			
-			timeStart = System.nanoTime();
-			for (int i = 0; i < 1_000_000_000; i++) {
-				if (testInt == (testInt2 + (int)j));
-				testInt2++;
-			}
-			timeStop = System.nanoTime();
-			System.out.printf("int:\t%,d\n", (timeStop -timeStart));
-			
-			timeStart = System.nanoTime();
-			for (int i = 0; i < 1_000_000_000; i++) {
-				if (testLong == (testLong2 + (long)j));
-				testLong2++;
-			}
-			timeStop = System.nanoTime();
-			System.out.printf("long:\t%,d\n", (timeStop -timeStart));
-			
-			System.out.println();
-		}
-		
-		
-		
-		
-		BoardsList bg = new BoardsList();
-		
 		Player[] players = new Player[2];
 		players[0] = new Player("Wadim", new Card(Image._9, Suit.c), new Card(Image._J, Suit.h));
 		players[1] = new Player("Roma", new Card(Image._5, Suit.c), new Card(Image._6, Suit.s));
+		
+		
+		BoardsList bg = new BoardsList();
+		BoardsListInt bli = new BoardsListInt();
+		int listInt[][] = new int[2][2598960];
+		for (int i = 0; i < 300; i++) {
+			bg.generateBourdsList(players);
+			bli.run();
+		}
+		
+		
 		
 		Equity eq = new Equity();
 		for (int i = 0; i < 0; i++) {

@@ -14,7 +14,8 @@ public class BoardsList {
 	public BoardsList() {
 		timeStart = System.nanoTime();
 		
-		list = new long[1712304];
+//		list = new long[1712304];
+		list = new long[2598960];
 	}
 		
 	private void run() {
@@ -79,13 +80,15 @@ public class BoardsList {
 			}
 		}
 		long timeStop = System.nanoTime()  - timeStart;
-		System.out.printf("generator: %,d\n", timeStop);
+		System.out.printf("generator:\t\t%,d\n", timeStop);
 	}
 	
 	public long[] generateBourdsList(Player... players) {
-		list = new long[1712304];
+//		list = new long[1712304];
+//		list = new long[2598960];
 		
-		setCardsInGame(players);
+		
+//		setCardsInGame(players);
 		this.run();
 		
 		return list;
